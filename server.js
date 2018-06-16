@@ -57,7 +57,7 @@ app.get('/login', (req, res) => {
   res.render('pages/login', values);
 });
 
-//Called when the authentification form is submitted
+// Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
   auth(req, res)
 });
@@ -70,13 +70,18 @@ app.get('/annoucements/available', (req, res) => {
   res.render('pages/objects')
 })
 
-app.get('/annoucements/:id', (req, res) => {
+app.get('/annoucement/:id', (req, res) => {
   res.render('pages/object')
 })
 
 app.get('/annoucements/my_annoucements', (req, res) => {
   res.render('pages/objects')
 })
+
+app.get('/annoucement/add_annoucement', (req, res) => {
+  res.render('pages/add')
+})
+
 
 /* ---- Logout endpoint ---- */
 app.get('/logout', (req, res) => {
