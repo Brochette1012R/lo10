@@ -16,6 +16,7 @@
     "express-basic-auth": "^1.1.5",
     "express-session": "^1.15.6",
     "ldapauth-fork": "^4.0.2",
+    "moment": "^2.22.2",
     "nodemon": "^1.17.5"
   }
 }

@@ -3,6 +3,7 @@ let app         = require('express')()
 let Ldap        = require('ldapauth-fork')
 let session     = require('express-session')
 let bodyParser  = require('body-parser')
+let moment = require('moment');
 
 // TEMPLATE ENGINE
 app.set('view engine', 'ejs')
@@ -39,7 +40,6 @@ var auth = function(req, res, next) {
     req.session.login = req.body.login
     if(req.body.login  === "Brochette" && req.body.pwd === "guylaine") {
         req.session.connected = true
-
         res.redirect('/')
     } else{
         req.session.errorAuth = "Identifiants non valides"
@@ -50,7 +50,6 @@ var auth = function(req, res, next) {
 
 // ROUTES
 /* ---- Login endpoint ---- */
-
 app.get('/login', (req, res) => {
   let values = {};
   req.session.errorAuth ? values.errorAuth  = req.session.errorAuth : undefined
@@ -78,8 +77,13 @@ app.get('/announcements/my_announcements', (req, res) => {
 })
 
 app.get('/announcement/add', (req, res) => {
-    console.log('tototiti')
-  res.render('pages/add')
+    let values = {startdate: moment().format("YYYY-MM-DD"),enddate: (moment().add(7,'d')).format("YYYY-MM-DD")};
+  res.render('pages/add',values)
+})
+
+app.post('/announcement/add/validation', (req, res) => {
+    
+    //res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {

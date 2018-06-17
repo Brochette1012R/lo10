@@ -2,12 +2,27 @@
 
 <div class="card">
   <div class="card-header">
-    <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i>Mettre à disposition un objet</h1>
+    <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i>&nbsp;Mettre à disposition un objet</h1>
   </div>
   <div class="card-body">
-    <form class="needs-validation" action="/" method="POST" novalidate>
-    
-      <button type="submit" class="btn btn-primary">Valider</button>
+    <form class="needs-validation" action="/announcement/add/validation" method="POST" novalidate>
+      <div class="form-group">
+        <label for="name">Nom de l'objet</label>
+        <input type="text" class="form-control" id="name" name="name" placeholder="Nom de l'objet" required>
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" class="form-control" id="description" name="description" placeholder="Description" required>
+      </div>
+      <div class="form-group">
+        <label for="startdate" class="col-form-label">Disponible à partir du</label>
+          <input class="form-control" type="date" value="<%= startdate %>" id="startdate" name="startdate">
+      </div>
+      <div class="form-group">
+        <label for="enddate" class="col-form-label">Disponible jusqu'au</label>
+        <input class="form-control" type="date" value="<%= enddate %>" id="enddate" name="enddate">
+      </div>
+      <button type="submit" class="btn btn-primary">Poster</button>
     </form>
   </div>
 </div>
