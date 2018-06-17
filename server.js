@@ -21,7 +21,7 @@ app.use(session({
 
 /* ---- authentification ---- */
 // On applique ce middleware à toutes les routes de l'appli, sauf celles précisés dans les conditions
-app.use('/*',function(req, res, next){
+app.use(function(req, res, next){
     if('/login' === req.path || '/login/validation' === req.path){
         return next()
     }
@@ -35,19 +35,22 @@ app.use('/*',function(req, res, next){
 });
 
 // fonction d'authenficiation, à remplacer par le système LDAP à priori
-var auth = function(req, res) {
+var auth = function(req, res, next) {
     req.session.login = req.body.login
     if(req.body.login  === "Brochette" && req.body.pwd === "guylaine") {
         req.session.connected = true
+
         res.redirect('/')
     } else{
         req.session.errorAuth = "Identifiants non valides"
+
         res.redirect('/login')
     }
 }
 
 // ROUTES
 /* ---- Login endpoint ---- */
+
 app.get('/login', (req, res) => {
   let values = {};
   req.session.errorAuth ? values.errorAuth  = req.session.errorAuth : undefined
@@ -55,33 +58,33 @@ app.get('/login', (req, res) => {
   req.session.errorAuth = undefined
   req.session.login = undefined
   res.render('pages/login', values);
-});
+})
 
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
   auth(req, res)
-});
+})
 
 app.get('/', (req, res) => {
     res.render('pages/index')
 })
 
-app.get('/annoucements/available', (req, res) => {
+app.get('/announcements/available', (req, res) => {
   res.render('pages/objects')
 })
 
-app.get('/annoucement/:id', (req, res) => {
-  res.render('pages/object')
-})
-
-app.get('/annoucements/my_annoucements', (req, res) => {
+app.get('/announcements/my_announcements', (req, res) => {
   res.render('pages/objects')
 })
 
-app.get('/annoucement/add_annoucement', (req, res) => {
+app.get('/announcement/add', (req, res) => {
+    console.log('tototiti')
   res.render('pages/add')
 })
 
+app.get('/announcement/:id', (req, res) => {
+  res.render('pages/object')
+})
 
 /* ---- Logout endpoint ---- */
 app.get('/logout', (req, res) => {
