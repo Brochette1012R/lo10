@@ -1,0 +1,23 @@
+<% include header %>
+
+<% if (typeof listOfAnnoucements !== 'undefined') { %>
+  <div>
+  <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Objets disponibles au prêt</h1>
+  <% listOfAnnoucements.forEach(function(annoucement){ %>
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1"><%= annoucement.object.name_object %></h5>
+          <small class="text-muted">Posté le <%= annoucement.publication_date.toString().replace(/,/g, "/") %> par <%= annoucement.login %>.</small>
+        </div>
+        <p class="mb-1"><%= annoucement.object.description %></p>
+        <small class="text-muted">Disponible du <%= annoucement.startdate.toString().replace(/,/g, "/") %> au <%= annoucement.enddate.toString().replace(/,/g, "/") %></small>
+      </a>
+    <% })} else { %>
+  <div class="alert alert-info" role="alert">
+    <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>
+    Aucun objet n'est disponible au prêt pour le moment. Repassez plus tard !
+  </div>
+<% } %>
+</div>
+
+<% include footer %>
