@@ -78,7 +78,7 @@ app.get('/announcements/available', (req, res) => {
 })
 
 app.get('/announcements/my_announcements', (req, res) => {
-  res.render('pages/objects')
+  res.render('pages/my_objects')
 })
 
 app.get('/announcement/add', (req, res) => {
