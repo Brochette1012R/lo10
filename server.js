@@ -4,6 +4,8 @@ let Ldap        = require('ldapauth-fork')
 let session     = require('express-session')
 let bodyParser  = require('body-parser')
 let moment = require('moment');
+let mail        = require('./mail.js')
+
 
 // TEMPLATE ENGINE
 app.set('view engine', 'ejs')
@@ -96,5 +98,10 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
+
 // CONFIG
 app.listen(8080)
+
+// Pour envoyer un mail il faut appeller ces deux lignes (sans oublier les paramètres qui sont décrites dans le fichier mail.js).
+/*var mailContent = mail.buildMail(requestSender, objectOwner, annoucement, 'request')
+mail.sendMail(mail.buildMessage(mailContent))*/
