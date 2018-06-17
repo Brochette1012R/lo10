@@ -10,7 +10,7 @@
           <small class="text-muted">Posté le <%= annoucement.publication_date.toString().replace(/,/g, "/") %> par <%= annoucement.login %>.</small>
         </div>
         <p class="mb-1"><%= annoucement.object.description %></p>
-        <small class="text-muted">Disponible du <%= annoucement.startdate.toString().replace(/,/g, "/") %> au <%= annoucement.enddate.toString().replace(/,/g, "/") %></small>
+        <small class="text-muted">Disponible du <%= annoucement.datestart.toString().replace(/,/g, "/") %> au <%= annoucement.dateend.toString().replace(/,/g, "/") %></small>
       </a>
     <% })} else { %>
   <div class="alert alert-info" role="alert">

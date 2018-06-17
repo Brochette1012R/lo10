@@ -5,6 +5,9 @@ let session     = require('express-session')
 let bodyParser  = require('body-parser')
 let moment = require('moment');
 let mail        = require('./mail.js')
+let Annoucement = require("./models/announcement")
+let Object = require("./models/object")
+let uuidv4 = require('uuid/v4');
 
 
 // TEMPLATE ENGINE
@@ -79,13 +82,31 @@ app.get('/announcements/my_announcements', (req, res) => {
 })
 
 app.get('/announcement/add', (req, res) => {
-    let values = {startdate: moment().format("YYYY-MM-DD"),enddate: (moment().add(7,'d')).format("YYYY-MM-DD")};
+    let values = {datestart: moment().format("YYYY-MM-DD"),dateend: (moment().add(7,'d')).format("YYYY-MM-DD")};
   res.render('pages/add',values)
 })
 
 app.post('/announcement/add/validation', (req, res) => {
-    
-    //res.redirect('/announcement/:id');
+    if(req.body.name  === undefined || req.body.name  === '') {
+        res.redirect('/announcement/add')
+    }
+    if(req.body.description  === undefined || req.body.description  === '') {
+        res.redirect('/announcement/add')
+    }
+    if(req.body.datestart  === undefined || req.body.datestart  === '') {
+        res.redirect('/announcement/add')
+    }
+    if(req.body.dateend  === undefined || req.body.dateend  === '') {
+        res.redirect('/announcement/add')
+    }
+    let docid_object = uuidv4();
+    let docid_announcement = uuidv4();
+    Object.creates(docid_object,req.body.name,req.body.description,function(body){
+        Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(body){
+        })
+    })
+    res.redirect('/announcement/add')
+    //TODO : res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {
