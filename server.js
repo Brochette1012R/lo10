@@ -8,6 +8,15 @@ let mail        = require('./mail.js')
 let Annoucement = require("./models/announcement")
 let Object = require("./models/object")
 let uuidv4 = require('uuid/v4');
+const {OperationHelper} = require('apac');
+
+const opHelper = new OperationHelper({
+    awsId:     'AKIAJJXURI3CDYZTSW6Q',
+    awsSecret: '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',
+    assocId:   'trocutt-21',
+    locale: 'FR',
+    maxRequestsPerSecond: 1
+});
 
 
 // TEMPLATE ENGINE
@@ -43,7 +52,7 @@ app.use(function(req, res, next){
 // fonction d'authenficiation, à remplacer par le système LDAP à priori
 var auth = function(req, res, next) {
     req.session.login = req.body.login
-    if(req.body.login  === "berauxre" && req.body.pwd === "guylaine") {
+    if(req.body.login  === "a" && req.body.pwd === "a") {
         req.session.surname = "Beraux"
         req.session.givenName = "Rémi"
         req.session.mail = "remi.beraux@utt.fr"
@@ -56,7 +65,7 @@ var auth = function(req, res, next) {
     }
 }
 
-var auth_ldap = function(req,res) {
+/*var auth_ldap = function(req,res) {
     req.session.login = req.body.login
     if(req.body.login  === "" || req.body.pwd === "" || req.body.login  === undefined || req.body.pwd === undefined){
         req.session.errorAuth = "Identifiants non valides"
@@ -81,7 +90,7 @@ var directory = new Ldap({
     url: 'ldap://ldap.utt.fr',
     searchBase: 'ou=People,dc=utt,dc=fr',
     searchFilter: '(uid={{username}})'
-});
+});*/
 
 // ROUTES
 /* ---- Login endpoint ---- */
@@ -96,22 +105,41 @@ app.get('/login', (req, res) => {
 
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
-  //auth(req, res)
-    auth_ldap(req, res)
+  auth(req, res)
+    //auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
     res.render('pages/index')
 })
 
+
 app.get('/announcements/available', (req, res) => {
-  Annoucement.getAllWithObjects(function(err,body){
-      if(err){
+     if(req.query.search  === undefined || req.query.search  === '') {
+        Annoucement.getAllWithObjects(function(err,body){
+        if(err){
         throw err
       }{
-          res.render('pages/objects',values = {listOfAnnouncements: body,moment:moment})
+        res.render('pages/objects',values = {listOfAnnouncements: body,moment:moment})
       }
-  })
+    })
+    } else {
+            //console.log(req);
+            opHelper.execute('ItemSearch', {
+                'SearchIndex': 'All',
+                'Keywords': req.query.search,
+                'ResponseGroup': 'Images,ItemAttributes,Offers'
+        }).then((response) => {
+            console.log("HELLO :" + response.responseBody.ASIN);
+            console.log("RAW RESPONSE BODY: ", response.responseBody);
+            //console.log("RESPONSE RESULT" + response.result);
+
+        }).catch((err) => {
+            console.error("Something went wrong! ", err);
+        });
+        res.render('pages/amazon');
+    }
+
 
 })
 
@@ -167,6 +195,10 @@ app.get('/announcement/:id', (req, res) => {
         }
     })
 })
+
+/*app.get('/announcements/available?search=aa', (req, res) => {
+
+}*/
 
 /* ---- Logout endpoint ---- */
 app.get('/logout', (req, res) => {
