@@ -6,15 +6,9 @@ let bodyParser  = require('body-parser')
 let moment      = require('moment');
 let mail        = require('./mail.js')
 let Annoucement = require("./models/announcement")
-<<<<<<< HEAD
-let Object      = require("./models/object")
-let uuidv4      = require('uuid/v4');
-=======
 let Request = require("./models/request")
 let Object = require("./models/object")
 let uuidv4 = require('uuid/v4');
->>>>>>> fd481757f32316272fd93c60f3512fcf88cc5a25
-
 
 // TEMPLATE ENGINE
 app.set('view engine', 'ejs')
