@@ -3,11 +3,11 @@ let app         = require('express')()
 let Ldap        = require('ldapauth-fork')
 let session     = require('express-session')
 let bodyParser  = require('body-parser')
-let moment = require('moment');
+let moment      = require('moment');
 let mail        = require('./mail.js')
 let Annoucement = require("./models/announcement")
-let Object = require("./models/object")
-let uuidv4 = require('uuid/v4');
+let Object      = require("./models/object")
+let uuidv4      = require('uuid/v4');
 
 
 // TEMPLATE ENGINE
@@ -78,7 +78,7 @@ app.get('/announcements/available', (req, res) => {
       if(err){
         throw err
       }{
-          res.render('pages/objects',values = {listOfAnnouncements: body,moment:moment})
+          res.render('pages/objects',values = {listOfAnnouncements: body, moment: moment})
       }
   })
 
@@ -114,17 +114,19 @@ app.post('/announcement/add/validation', (req, res) => {
     let docid_announcement = uuidv4();
     Object.creates(docid_object,req.body.name,req.body.description,function(err,body){
         if(err){
-            res.redirect('/announcement/add')
-        }   else{
-            Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(err,body) {
+
+        }else{
+            Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(body) {
                 if(err){
-                    res.redirect('/announcement/add')
+
                 }else{
-                    res.redirect('/announcement/'+docid_announcement);
+
                 }
             })
         }
     })
+    res.redirect('/announcement/add')
+    //TODO : res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {
@@ -132,7 +134,7 @@ app.get('/announcement/:id', (req, res) => {
         if(err){
             res.redirect('/announcements/available')
         }else{
-            res.render('pages/object', values = {announcement: body, session : req.session, moment:moment})
+            res.render('pages/object', values = {announcement: body, session : req.session, moment : moment})
         }
     })
 })

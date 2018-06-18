@@ -1,120 +1,69 @@
 <% include header %>
 
-<% var listOfObjectComments = [
-  {
-    "login": "berauxre",
-    "publication_date" : [
-    10,
-    3,
-    2018
-    ],
-    "content": "R.A.S",
-    "rating": 10
-  },
-  {
-    "login": "payotcha",
-    "publication_date" : [
-    20,
-    4,
-    2018
-    ],
-    "content": "Pas terrible",
-    "rating" : 5
-  }
-] %>
-
-
-<% var listOfUserComments = [
-  {
-    "login": "berauxre",
-    "publication_date" : [
-    10,
-    3,
-    2018
-    ],
-    "content": "R.A.S",
-    "rating": 10
-  },
-  {
-    "login": "payotcha",
-    "publication_date" : [
-    20,
-    4,
-    2018
-    ],
-    "content": "Pas terrible",
-    "rating" : 5
-  }
-] %>
-
-<% console.log(announcement) %>
   <% if (typeof announcement !== 'undefined') { %>
+
+    <%
+      var canComment = function(){
+        let result = false
+        if(typeof announcement.requests !== 'undefined'){
+          announcement.requests.forEach(function(request){
+            if(typeof request.accepted !== 'undefined' && request.accepted == 'oui' && typeof request.borrower.login !== 'undefined' && request.borrower.login == session.login && typeof request.comment == 'undefined'){
+              result = true
+            }
+          })
+        }
+        return result
+      }
+    %>
+
     <div class="card">
       <div class="card-header">
         <div class="d-flex w-100 justify-content-between">
           <h1 class="mb-1" style="font-size:20px"><%= announcement._object.name %></h1>
-          <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY")  %> à <%= moment(announcement.created_at).format("HH/MM")  %> <% if(announcement.owner != session.login){ %> par <%= announcement.owner %> <% } %></small>
+          <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY")  %> à <%= moment(announcement.created_at).format("HH/MM")  %> <% if(announcement.owner.login != session.login){ %> par <%= announcement.owner.login %> <% } %></small>
         </div>
       </div>
       <div class="card-body">
         <h6 class="card-subtitle mb-2 text-muted">Description</h6>
         <p class="card-text"><%= announcement._object.description %></p>
-        <h6 class="card-subtitle mb-2 text-muted">Etat</h6>
-        <p class="card-text"><%= announcement._object.condition %></p>
       </div>
       <div class="card-footer" style="background-color: rgba(255,255,255)">
         <div class="d-flex w-100   justify-content-between">
           <p class="text-muted">Disponible du <%= moment(announcement.datestart).format("DD/MM/YYYY") %> au <%= moment(announcement.dateend).format("DD/MM/YYYY") %></p>
-          <% if(announcement.owner != session.login && announcement.status == "disponible"){ %>
+          <% if(announcement.owner.login != session.login && announcement.status == "disponible"){ %>
             <button class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d">Envoyer une demande de prêt</button>
           <% } %>
         </div>
       </div>
     </div>
 
+      <% if(canComment() == true) { %>
+        <button data-toggle="modal"  data-target="#Modal" class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d; margin-top:20px">Emettre une évaluation</button>
+      <% } %>
 
       <div style="margin-top:50px">
       <div class="d-flex w-100 justify-content-between">
-        <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires associés à l'objet</h1>
-        <% if(announcement.login != session.login){ %>
-          <a data-toggle="modal" data-target="#Modal"><i class="far fa-plus-square"></i></a>
-        <% } %>
+        <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires</h1>
       </div>
-        <% if (typeof listOfObjectComments !== 'undefined') { %>
-          <% listOfObjectComments.forEach(function(comment){ %>
+      <%
+        if(typeof announcement.requests !== 'undefined'){
+          announcement.requests.forEach(function(request){
+            if(typeof request.accepted !== 'undefined' && request.accepted == 'oui' && typeof request.comment !== 'undefined'){
+      %>
             <div class="list-group-item  flex-column align-items-start">
               <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1"><%= comment.login %></h5>
-                <small class="text-muted">Posté le <%= comment.publication_date.toString().replace(/,/g, "/") %></small>
+                <h5 class="mb-1"><%= request.borrower.login %></h5>
+                <small class="text-muted">Posté le <%= request.date_comment %></small>
               </div>
-              <p class="mb-1"><%= comment.content %></p>
-              <small class="text-muted">Note <%= comment.rating %>/10</small>
+              <p class="mb-1"><%= request.comment %></p>
+              <p class="mb-1">Etat de l'objet : <%= request.condition %></p>
+              <small class="text-muted">Note <%= request.rating %>/10</small>
             </div>
-          <% }) %>
-        <% } %>
+      <%  }
+        })
+      }
+      %>
       </div>
-
-      <div style="margin-top:50px">
-        <div class="d-flex w-100 justify-content-between">
-          <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires associés à <%= announcement.login %></h1>
-          <% if(announcement.login != session.login){ %>
-            <a data-toggle="modal" data-target="#Modal"><i class="far fa-plus-square"></i></a>
-          <% } %>
-        </div>
-        <% if (typeof listOfUserComments !== 'undefined') { %>
-          <% listOfUserComments.forEach(function(comment){ %>
-            <div class="list-group-item  flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1"><%= comment.login %></h5>
-                <small class="text-muted">Posté le <%= comment.publication_date.toString().replace(/,/g, "/") %></small>
-              </div>
-              <p class="mb-1"><%= comment.content %></p>
-              <small class="text-muted">Note <%= comment.rating %>/10</small>
-            </div>
-          <% }) %>
-        <% } %>
-      </div>
-
 
   <% } else { %>
       <div class="alert alert-info" role="alert">
@@ -129,19 +78,57 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="ModalLabel">Evaluation</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-        <button class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d">Valider l'évalution</button>
+      <form class="needs-validation" action="" novalidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <div class="form-row">
+              <div class="form-group col-md-5">
+                <label for="comment">Commentaire</label>
+                <input type="text" class="form-control" id="comment" required>
+              </div>
+              <div class="form-group col-md-2">
+                <label for="rating">Note</label>
+                <select id="rating" class="form-control" required>
+                  <% for (i = 1; i <= 10; i++) { %>
+                  <option <% if(i == 5){%>selected<% } %>><%= i %></option>
+                  <% } %>
+                </select>
+              </div>
+              <div class="form-group col-md-5">
+                <label for="condition">Etat de l'objet</label>
+                <input type="text" class="form-control" id="condition" required>
+              </div>
+            </div>
+        </div>
+        <div class="form-group">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <button class="btn btn-outline-light" type="submit" style="border-color: rgba(0,0,0,.125); color: #6c757d">Valider l'évalution</button>
+          </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  (function() {
+    'use strict';
+    window.addEventListener('load', function() {
+      var forms = document.getElementsByClassName('needs-validation')
+      var validation = Array.prototype.filter.call(forms, function(form) {
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+    }, false)
+  })()
+</script>
 
 <% include footer %>
