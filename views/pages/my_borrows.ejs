@@ -2,14 +2,14 @@
 
 <% if (typeof listOfMyBorrows !== 'undefined') { %>
   <div>
-  <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Objets disponibles au prêt</h1>
-  <% listOfMyBorrows.forEach(function(announcement){ %>
-      <a href="/announcement/<%= announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
+  <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Mes emprunts</h1>
+  <% listOfMyBorrows.forEach(function(AnnouncementWithRequest){ %>
+      <a href="/announcement/<%= AnnouncementWithRequest.Announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1"><%= announcement.object.name_object %></h5>
-          <small class="text-muted">Posté le <%= announcement.publication_date.toString().replace(/,/g, "/") %> par <%= announcement.login %>.</small>
+          <h5 class="mb-1"><%= AnnouncementWithRequest.Announcement._object.name %></h5>
+          <small class="text-muted">Posté le <%= moment(AnnouncementWithRequest.Announcement.created_at).format("DD/MM/YYYY") %> à <%= moment(AnnouncementWithRequest.Announcement.created_at).format("HH:MM") %> par <%= AnnouncementWithRequest.Announcement.owner.login %>.</small>
         </div>
-        <p class="mb-1"><%= announcement.object.description %></p>
+        <p class="mb-1"><%= AnnouncementWithRequest.Announcement._object.description %></p>
       </a>
     <% })} else { %>
   <div class="alert alert-info" role="alert">
