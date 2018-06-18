@@ -78,7 +78,7 @@ app.get('/announcements/available', (req, res) => {
       if(err){
         throw err
       }{
-          res.render('pages/objects',{listOfAnnouncements: body,moment:moment})
+          res.render('pages/objects',values = {listOfAnnouncements: body,moment:moment})
       }
   })
 
@@ -134,8 +134,7 @@ app.get('/announcement/:id', (req, res) => {
         if(err){
             res.redirect('/announcements/available')
         }else{
-            //todo : res.render('pages/object',{announcement: body})
-            res.send(body)
+            res.render('pages/object', values = {announcement: body, session : req.session})
         }
     })
 })

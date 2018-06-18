@@ -1,34 +1,5 @@
 <% include header %>
 
-<% var announcement =  {
-  "_id": "5fd6e30caf66b7f9e1948009a40073b3",
-  "_rev": "3-070af72883eb33be8082ecbaed017e87",
-  "login": "stenekgu",
-  "publication_date": [
-    20,
-    5,
-    2018
-  ],
-  "phone_number": "0674811167",
-  "mail_address": "guillaume.stenek@utt.fr",
-  "startdate": [
-    7,
-    6,
-    2018
-  ],
-  "enddate": [
-    17,
-    6,
-    2018
-  ],
-  "object": {
-    "name_object": "Ballon de foot Adidas",
-    "description": "Ballon de foot Adidas ayant vécu mais faisant toujours l'affaire.",
-    "status": "disponible",
-    "condition": "Usé"
-  }
-} %>
-
 <% var listOfObjectComments = [
   {
     "login": "berauxre",
@@ -75,6 +46,8 @@
     "rating" : 5
   }
 ] %>
+
+<% console.log(announcement) %>
   <% if (typeof announcement !== 'undefined') { %>
     <div class="card">
       <div class="card-header">
@@ -103,7 +76,9 @@
       <div style="margin-top:50px">
       <div class="d-flex w-100 justify-content-between">
         <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires associés à l'objet</h1>
-        <a data-toggle="modal" data-target="#Modal"><i class="far fa-plus-square"></i></a>
+        <% if(announcement.login != session.login){ %>
+          <a data-toggle="modal" data-target="#Modal"><i class="far fa-plus-square"></i></a>
+        <% } %>
       </div>
         <% if (typeof listOfObjectComments !== 'undefined') { %>
           <% listOfObjectComments.forEach(function(comment){ %>
@@ -122,7 +97,9 @@
       <div style="margin-top:50px">
         <div class="d-flex w-100 justify-content-between">
           <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires associés à <%= announcement.login %></h1>
-          <a data-toggle="modal" data-target="#Modal"><i class="far fa-plus-square"></i></a>
+          <% if(announcement.login != session.login){ %>
+            <a data-toggle="modal" data-target="#Modal"><i class="far fa-plus-square"></i></a>
+          <% } %>
         </div>
         <% if (typeof listOfUserComments !== 'undefined') { %>
           <% listOfUserComments.forEach(function(comment){ %>
