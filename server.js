@@ -114,19 +114,18 @@ app.post('/announcement/add/validation', (req, res) => {
     let docid_announcement = uuidv4();
     Object.creates(docid_object,req.body.name,req.body.description,function(err,body){
         if(err){
-
+            res.redirect('/announcement/add')
         }else{
-            Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(body) {
+            Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(err,body) {
                 if(err){
-
+                    res.redirect('/announcement/add')
                 }else{
-
+                    console.log('/announcement/'+docid_announcement)
+                    res.redirect('/announcement/'+docid_announcement);
                 }
             })
         }
     })
-    res.redirect('/announcement/add')
-    //TODO : res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {
@@ -134,7 +133,7 @@ app.get('/announcement/:id', (req, res) => {
         if(err){
             res.redirect('/announcements/available')
         }else{
-            res.render('pages/object', values = {announcement: body, session : req.session})
+            res.render('pages/object', values = {announcement: body, session : req.session, moment:moment})
         }
     })
 })
