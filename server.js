@@ -74,7 +74,14 @@ app.get('/', (req, res) => {
 })
 
 app.get('/announcements/available', (req, res) => {
-  res.render('pages/objects')
+  Annoucement.getAllWithObjects(function(err,body){
+      if(err){
+        throw err
+      }{
+          res.render('pages/objects',{listOfAnnouncements: body,moment:moment})
+      }
+  })
+
 })
 
 app.get('/announcements/my_announcements', (req, res) => {
@@ -105,17 +112,32 @@ app.post('/announcement/add/validation', (req, res) => {
     }
     let docid_object = uuidv4();
     let docid_announcement = uuidv4();
-    Object.creates(docid_object,req.body.name,req.body.description,function(body){
-        Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(body){
-        })
+    Object.creates(docid_object,req.body.name,req.body.description,function(err,body){
+        if(err){
+
+        }else{
+            Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(body) {
+                if(err){
+
+                }else{
+
+                }
+            })
+        }
     })
     res.redirect('/announcement/add')
     //TODO : res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {
-  let values = {session : req.session}
-  res.render('pages/object', values)
+    Annoucement.getById(req.params.id,function(err,body){
+        if(err){
+            res.redirect('/announcements/available')
+        }else{
+            //todo : res.render('pages/object',{announcement: body})
+            res.send(body)
+        }
+    })
 })
 
 /* ---- Logout endpoint ---- */

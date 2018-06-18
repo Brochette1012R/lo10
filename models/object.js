@@ -13,12 +13,27 @@ class Object{
             json: true,
         },function(err, resp, body) {
             if (err){
+                callback(err,body)
             }
-                if (body.ok) {
-                    callback(body)
-                }
+            if (body) {
+                callback(null,body)
             }
+        }
         )
+    }
+
+    static getById(id,callback) {
+        request.get({
+            url: request.url + request.db + id,
+            json: true,
+        },function(err, resp, body) {
+            if (err){
+                callback(err,body)
+            }
+            if (body) {
+                callback(null,body)
+            }
+        })
     }
 }
 
