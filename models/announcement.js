@@ -5,14 +5,19 @@ let moment = require("moment")
 
 class Announcement {
 
-    static creates(id,login,objectid,datestart,dateend,callback) {
+    static creates(id,login,objectid,datestart,dateend,surname,givenName,mail,callback) {
         request.put({
             url: request.url + request.db + id,
             body: {
                 type:'announcement',
                 created_at: new Date(),
                 status:'disponible',
-                owner: login,
+                owner: {
+                    login : login,
+                    surname: surname,
+                    givenName : givenName,
+                    mail: mail,
+                },
                 object: objectid,
                 datestart: datestart,
                 dateend: dateend,
