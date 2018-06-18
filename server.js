@@ -101,16 +101,32 @@ app.post('/announcement/add/validation', (req, res) => {
     }
     let docid_object = uuidv4();
     let docid_announcement = uuidv4();
-    Object.creates(docid_object,req.body.name,req.body.description,function(body){
-        Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(body){
-        })
+    Object.creates(docid_object,req.body.name,req.body.description,function(err,body){
+        if(err){
+
+        }else{
+            Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(body) {
+                if(err){
+
+                }else{
+
+                }
+            })
+        }
     })
     res.redirect('/announcement/add')
     //TODO : res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {
-  res.render('pages/object')
+    Annoucement.getById(req.params.id,function(err,body){
+        if(err){
+            res.redirect('/announcements/available')
+        }else{
+            //todo : res.render('pages/object',{announcement: body})
+            res.send(body)
+        }
+    })
 })
 
 /* ---- Logout endpoint ---- */
