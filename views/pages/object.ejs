@@ -65,13 +65,14 @@
       <div class="card-footer" style="background-color: rgba(255,255,255)">
         <div class="d-flex w-100   justify-content-between">
           <p class="text-muted">Disponible du <%= moment(announcement.datestart).format("DD/MM/YYYY") %> au <%= moment(announcement.dateend).format("DD/MM/YYYY") %></p>
-          <% if(announcement.owner.login != session.login && announcement.status == "disponible"){ %>
-            <button class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d">Envoyer une demande de prêt</button>
+          <% if(announcement.owner.login != session.login && announcement.status == "disponible" && canRequest){ %>
+          <form class="" action="/announcement/request/validation/<%= announcement._id %>" method="POST" novalidate>
+            <button type="submit" class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d">Envoyer une demande de prêt</button>
+          </form>
           <% } %>
         </div>
       </div>
     </div>
-
 
       <div style="margin-top:50px">
       <div class="d-flex w-100 justify-content-between">

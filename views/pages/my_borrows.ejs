@@ -2,14 +2,25 @@
 
 <% if (typeof listOfMyBorrows !== 'undefined') { %>
   <div>
-  <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Mes emprunts</h1>
+  <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Mes demandes d'emprunts</h1>
   <% listOfMyBorrows.forEach(function(AnnouncementWithRequest){ %>
       <a href="/announcement/<%= AnnouncementWithRequest.Announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1"><%= AnnouncementWithRequest.Announcement._object.name %></h5>
           <small class="text-muted">Posté le <%= moment(AnnouncementWithRequest.Announcement.created_at).format("DD/MM/YYYY") %> à <%= moment(AnnouncementWithRequest.Announcement.created_at).format("HH:MM") %> par <%= AnnouncementWithRequest.Announcement.owner.login %>.</small>
         </div>
-        <p class="mb-1"><%= AnnouncementWithRequest.Announcement._object.description %></p>
+        <div class="d-flex w-100 justify-content-between">
+          <p class="mb-1"><%= AnnouncementWithRequest.Announcement._object.description %></p>
+          <% if (typeof AnnouncementWithRequest.request.accepted !== 'undefined' && AnnouncementWithRequest.request.accepted === "non" ) { %>
+          <i class="fa fa-icon fa-ban"></i><%= %>
+          <% } %>
+          <% if (typeof AnnouncementWithRequest.request.accepted !== 'undefined' && AnnouncementWithRequest.request.accepted === "oui" ) { %>
+          <i class="fa fa-icon fa-check"></i><%= %>
+          <% } %>
+          <% if (typeof AnnouncementWithRequest.request.accepted === 'undefined' || AnnouncementWithRequest.request.accepted === "" ) { %>
+          <i class="fa fa-icon fa-question"></i><%= %>
+          <% } %>
+        </div>
       </a>
     <% })} else { %>
   <div class="alert alert-info" role="alert">

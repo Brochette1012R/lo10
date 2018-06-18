@@ -50,6 +50,13 @@ var auth = function(req, res, next) {
         req.session.mail = "remi.beraux@utt.fr"
         req.session.connected = true
         res.redirect('/')
+
+    }else if(req.body.login  === "stenekgu" && req.body.pwd === "guylaine") {
+        req.session.surname = "Stenek"
+        req.session.givenName = "Guillaume"
+        req.session.mail = "guillaume.stenek@utt.fr"
+        req.session.connected = true
+        res.redirect('/')
     } else{
         req.session.errorAuth = "Identifiants non valides"
         res.redirect('/login')
@@ -167,7 +174,31 @@ app.get('/announcement/:id', (req, res) => {
         if(err){
             res.redirect('/announcements/available')
         }else{
-            res.render('pages/object', values = {announcement: body, session : req.session, moment:moment})
+            let error = 0;
+            if(body.requests !== undefined){
+                for (let i=0; i < body['requests'].length; i++) {
+                    if (body['requests'][i]['borrower']['login'] === req.session.login) {
+                        error = 1;
+                        break;
+                    }
+                }
+            }
+            let canRequest = undefined
+            if(error === 0) {
+                canRequest = true
+            }
+            res.render('pages/object', values = {announcement: body, session : req.session, moment:moment, canRequest: canRequest})
+        }
+    })
+})
+
+app.post('/announcement/request/validation/:id', (req, res) => {
+
+    Request.addRequest(req.params.id,req.session.login, req.session.surname, req.session.givenName, req.session.mail, function(err, body) {
+        if (err) {
+            res.redirect('/announcement/'+req.params.id)
+        } else {
+            res.redirect('/announcement/'+req.params.id)
         }
     })
 })
