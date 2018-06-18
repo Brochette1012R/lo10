@@ -115,12 +115,11 @@ app.post('/announcement/add/validation', (req, res) => {
     Object.creates(docid_object,req.body.name,req.body.description,function(err,body){
         if(err){
             res.redirect('/announcement/add')
-        }else{
+        }   else{
             Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(err,body) {
                 if(err){
                     res.redirect('/announcement/add')
                 }else{
-                    console.log('/announcement/'+docid_announcement)
                     res.redirect('/announcement/'+docid_announcement);
                 }
             })
