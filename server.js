@@ -81,6 +81,10 @@ app.get('/announcements/my_announcements', (req, res) => {
   res.render('pages/my_objects')
 })
 
+app.get('/announcements/my_borrows', (req, res) => {
+  res.render('pages/my_borrows')
+})
+
 app.get('/announcement/add', (req, res) => {
     let values = {datestart: moment().format("YYYY-MM-DD"),dateend: (moment().add(7,'d')).format("YYYY-MM-DD")};
   res.render('pages/add',values)
@@ -110,7 +114,8 @@ app.post('/announcement/add/validation', (req, res) => {
 })
 
 app.get('/announcement/:id', (req, res) => {
-  res.render('pages/object')
+  let values = {session : req.session}
+  res.render('pages/object', values)
 })
 
 /* ---- Logout endpoint ---- */

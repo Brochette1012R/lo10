@@ -1,0 +1,22 @@
+<% include header %>
+
+<% if (typeof listOfMyBorrows !== 'undefined') { %>
+  <div>
+  <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Objets disponibles au prêt</h1>
+  <% listOfMyBorrows.forEach(function(announcement){ %>
+      <a href="/announcement/<%= announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1"><%= announcement.object.name_object %></h5>
+          <small class="text-muted">Posté le <%= announcement.publication_date.toString().replace(/,/g, "/") %> par <%= announcement.login %>.</small>
+        </div>
+        <p class="mb-1"><%= announcement.object.description %></p>
+      </a>
+    <% })} else { %>
+  <div class="alert alert-info" role="alert">
+    <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>
+    Vous n'avez aucun emprunt enregistré dans votre historique.
+  </div>
+<% } %>
+</div>
+
+<% include footer %>

@@ -1,0 +1,170 @@
+<% include header %>
+
+<% var announcement =  {
+  "_id": "5fd6e30caf66b7f9e1948009a40073b3",
+  "_rev": "3-070af72883eb33be8082ecbaed017e87",
+  "login": "stenekgu",
+  "publication_date": [
+    20,
+    5,
+    2018
+  ],
+  "phone_number": "0674811167",
+  "mail_address": "guillaume.stenek@utt.fr",
+  "startdate": [
+    7,
+    6,
+    2018
+  ],
+  "enddate": [
+    17,
+    6,
+    2018
+  ],
+  "object": {
+    "name_object": "Ballon de foot Adidas",
+    "description": "Ballon de foot Adidas ayant vécu mais faisant toujours l'affaire.",
+    "status": "disponible",
+    "condition": "Usé"
+  }
+} %>
+
+<% var listOfObjectComments = [
+  {
+    "login": "berauxre",
+    "publication_date" : [
+    10,
+    3,
+    2018
+    ],
+    "content": "R.A.S",
+    "rating": 10
+  },
+  {
+    "login": "payotcha",
+    "publication_date" : [
+    20,
+    4,
+    2018
+    ],
+    "content": "Pas terrible",
+    "rating" : 5
+  }
+] %>
+
+
+<% var listOfUserComments = [
+  {
+    "login": "berauxre",
+    "publication_date" : [
+    10,
+    3,
+    2018
+    ],
+    "content": "R.A.S",
+    "rating": 10
+  },
+  {
+    "login": "payotcha",
+    "publication_date" : [
+    20,
+    4,
+    2018
+    ],
+    "content": "Pas terrible",
+    "rating" : 5
+  }
+] %>
+  <% if (typeof announcement !== 'undefined') { %>
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex w-100 justify-content-between">
+          <h1 class="mb-1" style="font-size:20px"><%= announcement.object.name_object %></h1>
+          <small class="text-muted">Posté le <%= announcement.publication_date.toString().replace(/,/g, "/") %> <% if(announcement.login != session.login){ %> par <%= announcement.login %> <% } %></small>
+        </div>
+      </div>
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted">Description</h6>
+        <p class="card-text"><%= announcement.object.description %></p>
+        <h6 class="card-subtitle mb-2 text-muted">Etat</h6>
+        <p class="card-text"><%= announcement.object.condition %></p>
+      </div>
+      <div class="card-footer" style="background-color: rgba(255,255,255)">
+        <div class="d-flex w-100   justify-content-between">
+          <p class="text-muted">Disponible du <%= announcement.startdate.toString().replace(/,/g, "/") %> au <%= announcement.enddate.toString().replace(/,/g, "/") %></p>
+          <% if(announcement.login != session.login && announcement.object.status == "disponible"){ %>
+            <button class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d">Envoyer une demande de prêt</button>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+
+      <div style="margin-top:50px">
+      <div class="d-flex w-100 justify-content-between">
+        <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires associés à l'objet</h1>
+        <a data-toggle="modal" data-target="#Modal"><i class="far fa-plus-square"></i></a>
+      </div>
+        <% if (typeof listOfObjectComments !== 'undefined') { %>
+          <% listOfObjectComments.forEach(function(comment){ %>
+            <div class="list-group-item  flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1"><%= comment.login %></h5>
+                <small class="text-muted">Posté le <%= comment.publication_date.toString().replace(/,/g, "/") %></small>
+              </div>
+              <p class="mb-1"><%= comment.content %></p>
+              <small class="text-muted">Note <%= comment.rating %>/10</small>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+
+      <div style="margin-top:50px">
+        <div class="d-flex w-100 justify-content-between">
+          <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires associés à <%= announcement.login %></h1>
+          <a data-toggle="modal" data-target="#Modal"><i class="far fa-plus-square"></i></a>
+        </div>
+        <% if (typeof listOfUserComments !== 'undefined') { %>
+          <% listOfUserComments.forEach(function(comment){ %>
+            <div class="list-group-item  flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1"><%= comment.login %></h5>
+                <small class="text-muted">Posté le <%= comment.publication_date.toString().replace(/,/g, "/") %></small>
+              </div>
+              <p class="mb-1"><%= comment.content %></p>
+              <small class="text-muted">Note <%= comment.rating %>/10</small>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+
+
+  <% } else { %>
+      <div class="alert alert-info" role="alert">
+        <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>
+        Aucun objet ne correspond à l'identifiant sélectionné.
+      </div>
+  <% } %>
+
+  <!-- Modal -->
+<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabel">Evaluation</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d">Valider l'évalution</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% include footer %>

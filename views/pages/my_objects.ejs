@@ -2,22 +2,22 @@
 
 <% if (typeof listOfMyAnnouncements !== 'undefined') { %>
   <div>
-  <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Objets disponibles au prêt</h1>
-  <% listOfMyAnnouncements.forEach(function(announcement){ %>
-      <a href="/announcement/<%= announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
-        <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1"><%= announcement.object.name_object %></h5>
-          <small class="text-muted">Posté le <%= announcement.publication_date.toString().replace(/,/g, "/") %></small>
-        </div>
-        <p class="mb-1"><%= announcement.object.description %></p>
-        <small class="text-muted">Disponible du <%= announcement.startdate.toString().replace(/,/g, "/") %> au <%= announcement.enddate.toString().replace(/,/g, "/") %></small>
-      </a>
-    <% })} else { %>
-  <div class="alert alert-info" role="alert">
-    <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>
-    Vous n'avez aucune annonce en ligne. Cliquez sur "Ajouter une annonce" pour en publier une.
+    <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Objets disponibles au prêt</h1>
+    <% listOfMyAnnouncements.forEach(function(announcement){ %>
+        <a href="/announcement/<%= announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1"><%= announcement.object.name_object %></h5>
+            <small class="text-muted">Posté le <%= announcement.publication_date.toString().replace(/,/g, "/") %></small>
+          </div>
+          <p class="mb-1"><%= announcement.object.description %></p>
+          <small class="text-muted">Disponible du <%= announcement.startdate.toString().replace(/,/g, "/") %> au <%= announcement.enddate.toString().replace(/,/g, "/") %></small>
+        </a>
+      <% })} else { %>
+    <div class="alert alert-info" role="alert">
+      <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>
+      Vous n'avez aucune annonce en ligne. Cliquez sur "Ajouter une annonce" pour en publier une.
+    </div>
   </div>
 <% } %>
-</div>
 
 <% include footer %>
