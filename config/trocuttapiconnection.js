@@ -1,4 +1,4 @@
 let request = require('request')
 request.db = "trocutt/"
-request.url = 'http://127.0.0.1:5984/'
+request.url = 'http://ec2-52-208-39-104.eu-west-1.compute.amazonaws.com:5984/'
 module.exports = request

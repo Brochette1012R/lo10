@@ -43,7 +43,10 @@ app.use(function(req, res, next){
 // fonction d'authenficiation, à remplacer par le système LDAP à priori
 var auth = function(req, res, next) {
     req.session.login = req.body.login
-    if(req.body.login  === "Brochette" && req.body.pwd === "guylaine") {
+    if(req.body.login  === "berauxre" && req.body.pwd === "guylaine") {
+        req.session.surname = "Beraux"
+        req.session.givenName = "Rémi"
+        req.session.mail = "remi.beraux@utt.fr"
         req.session.connected = true
         res.redirect('/')
     } else{
@@ -52,6 +55,33 @@ var auth = function(req, res, next) {
         res.redirect('/login')
     }
 }
+
+var auth_ldap = function(req,res) {
+    req.session.login = req.body.login
+    if(req.body.login  === "" || req.body.pwd === "" || req.body.login  === undefined || req.body.pwd === undefined){
+        req.session.errorAuth = "Identifiants non valides"
+        res.redirect('/login')
+    }
+
+    directory.authenticate(req.body.login, req.body.pwd, function(err, user) {
+        if(err){
+            res.redirect('/login')
+        }else{
+            console.log(user)
+            req.session.connected = true
+            req.session.givenName = user.givenName
+            req.session.surname = user.sn
+            req.session.mail = user.mail
+            res.redirect("/")
+        }
+    });
+}
+
+var directory = new Ldap({
+    url: 'ldap://ldap.utt.fr',
+    searchBase: 'ou=People,dc=utt,dc=fr',
+    searchFilter: '(uid={{username}})'
+});
 
 // ROUTES
 /* ---- Login endpoint ---- */
@@ -66,7 +96,8 @@ app.get('/login', (req, res) => {
 
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
-  auth(req, res)
+  //auth(req, res)
+    auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
@@ -116,7 +147,7 @@ app.post('/announcement/add/validation', (req, res) => {
         if(err){
             res.redirect('/announcement/add')
         }   else{
-            Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, function(err,body) {
+            Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, req.session.surname, req.session.givenName, req.session.mail,function(err,body) {
                 if(err){
                     res.redirect('/announcement/add')
                 }else{

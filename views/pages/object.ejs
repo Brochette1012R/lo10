@@ -53,7 +53,7 @@
       <div class="card-header">
         <div class="d-flex w-100 justify-content-between">
           <h1 class="mb-1" style="font-size:20px"><%= announcement._object.name %></h1>
-          <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY")  %> à <%= moment(announcement.created_at).format("HH/MM")  %> <% if(announcement.owner != session.login){ %> par <%= announcement.owner %> <% } %></small>
+          <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY")  %> à <%= moment(announcement.created_at).format("HH/MM")  %> <% if(announcement.owner.login != session.login){ %> par <%= announcement.owner.login %> <% } %></small>
         </div>
       </div>
       <div class="card-body">
@@ -65,7 +65,7 @@
       <div class="card-footer" style="background-color: rgba(255,255,255)">
         <div class="d-flex w-100   justify-content-between">
           <p class="text-muted">Disponible du <%= moment(announcement.datestart).format("DD/MM/YYYY") %> au <%= moment(announcement.dateend).format("DD/MM/YYYY") %></p>
-          <% if(announcement.owner != session.login && announcement.status == "disponible"){ %>
+          <% if(announcement.owner.login != session.login && announcement.status == "disponible"){ %>
             <button class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d">Envoyer une demande de prêt</button>
           <% } %>
         </div>
@@ -96,7 +96,7 @@
 
       <div style="margin-top:50px">
         <div class="d-flex w-100 justify-content-between">
-          <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires associés à <%= announcement.login %></h1>
+          <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires associés à <%= announcement.owner.login %></h1>
           <% if(announcement.login != session.login){ %>
             <a data-toggle="modal" data-target="#Modal"><i class="far fa-plus-square"></i></a>
           <% } %>
