@@ -6,6 +6,7 @@ let bodyParser  = require('body-parser')
 let moment = require('moment');
 let mail        = require('./mail.js')
 let Annoucement = require("./models/announcement")
+let Request = require("./models/request")
 let Object = require("./models/object")
 let uuidv4 = require('uuid/v4');
 
@@ -51,12 +52,16 @@ var auth = function(req, res, next) {
         res.redirect('/')
     } else{
         req.session.errorAuth = "Identifiants non valides"
-
         res.redirect('/login')
     }
 }
 
 var auth_ldap = function(req,res) {
+    let directory = new Ldap({
+        url: 'ldap://ldap.utt.fr',
+        searchBase: 'ou=People,dc=utt,dc=fr',
+        searchFilter: '(uid={{username}})'
+    });
     req.session.login = req.body.login
     if(req.body.login  === "" || req.body.pwd === "" || req.body.login  === undefined || req.body.pwd === undefined){
         req.session.errorAuth = "Identifiants non valides"
@@ -67,7 +72,6 @@ var auth_ldap = function(req,res) {
         if(err){
             res.redirect('/login')
         }else{
-            console.log(user)
             req.session.connected = true
             req.session.givenName = user.givenName
             req.session.surname = user.sn
@@ -76,12 +80,6 @@ var auth_ldap = function(req,res) {
         }
     });
 }
-
-var directory = new Ldap({
-    url: 'ldap://ldap.utt.fr',
-    searchBase: 'ou=People,dc=utt,dc=fr',
-    searchFilter: '(uid={{username}})'
-});
 
 // ROUTES
 /* ---- Login endpoint ---- */
@@ -96,8 +94,8 @@ app.get('/login', (req, res) => {
 
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
-  //auth(req, res)
-    auth_ldap(req, res)
+  auth(req, res)
+  //  auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
@@ -120,7 +118,13 @@ app.get('/announcements/my_announcements', (req, res) => {
 })
 
 app.get('/announcements/my_borrows', (req, res) => {
-  res.render('pages/my_borrows')
+    Request.getRequestForBorrower(req.session.login,function(err,body){
+        if(err){
+            throw err
+        }{
+            res.render('pages/my_borrows',values = {listOfMyBorrows: body,moment:moment})
+        }
+    })
 })
 
 app.get('/announcement/add', (req, res) => {
