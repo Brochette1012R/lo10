@@ -74,7 +74,14 @@ app.get('/', (req, res) => {
 })
 
 app.get('/announcements/available', (req, res) => {
-  res.render('pages/objects')
+  Annoucement.getAllWithObjects(function(err,body){
+      if(err){
+        throw err
+      }{
+          res.render('pages/objects',{listOfAnnouncements: body,moment:moment})
+      }
+  })
+
 })
 
 app.get('/announcements/my_announcements', (req, res) => {

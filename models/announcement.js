@@ -1,5 +1,7 @@
 let request = require("../config/trocuttapiconnection")
 let Object = require("./object")
+let design = "_design/announcement/"
+let moment = require("moment")
 
 class Announcement {
 
@@ -43,6 +45,25 @@ class Announcement {
                         callback(null,body)
                     }
                 })
+            }
+        })
+    }
+
+    static getAllWithObjects(callback) {
+        request.get({
+            url: request.url + request.db + design + "_view/getAnnouncements?include_docs=true",
+            json: true,
+        },function(err, resp, body) {
+            if (err){
+                callback(err,body)
+            }
+            else if (body) {
+                let listAnnouncements = []
+                for (let res of body.rows) {
+                    res.key[1]._object = res.doc
+                    listAnnouncements.push(res.key[1])
+                }
+                callback(null,listAnnouncements)
             }
         })
     }
