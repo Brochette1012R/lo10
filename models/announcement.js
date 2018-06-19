@@ -99,6 +99,36 @@ class Announcement {
             }
         })
     }
+
+    static getAppointment(id, callback){
+        this.getById(id,function(err,body){
+            if(err){
+                callback(err,body)
+            }else{
+                if(body.appointment === undefined){
+                    callback({err: "Pas d'appointment"},body)
+                }else{
+                    request.get({
+                        url: request.url + request.db + design + "_show/getAppointment/"+id,
+                        headers: {
+                            'Accept': 'application/ics'
+                        }
+                    },function(err, resp, body) {
+                        if (err){
+                            callback(err,body)
+                        }
+                        else{
+                            callback(err,body)
+                        }
+                    })
+                }
+            }
+        })
+    }
 }
+/*Annoucement.getById(req.params.id,function(err,body){
+        if(err){
+            res.redirect("/announcements/available")
+        }else{*/
 
 module.exports = Announcement;
