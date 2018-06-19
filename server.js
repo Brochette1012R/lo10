@@ -112,7 +112,7 @@ app.get('/announcements/available', (req, res) => {
   Annoucement.getAvailables(function(err,body){
       if(err){
         throw err
-      }{
+      }else{
           res.render('pages/objects',values = {listOfAnnouncements: body, moment: moment})
       }
   })
