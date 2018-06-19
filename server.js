@@ -171,10 +171,11 @@ app.post('/announcement/add/validation', (req, res) => {
 app.get('/announcement/:id', (req, res) => {
 
   var checkingCanComment = function(body){
-    let result = false
-    if(typeof body.requests !== 'undefined'){
+    let result = undefined
+    if(body.requests !== undefined){
+        console.log(body)
       body.requests.forEach(function(request){
-        if(typeof request.accepted !== 'undefined' && request.accepted == 'oui' && typeof request.borrower.login !== 'undefined' && request.borrower.login == session.login && typeof request.comment == 'undefined'){
+        if(request.accepted !== undefined && request.accepted === "oui" && request.borrower.login !== undefined && request.borrower.login === req.session.login && request.comment === undefined){
           result = true
         }
       })
@@ -184,7 +185,7 @@ app.get('/announcement/:id', (req, res) => {
 
     Annoucement.getById(req.params.id,function(err,body){
         if(err){
-            res.redirect('/announcements/available')
+            res.redirect("/announcements/available")
         }else{
             let error = 0;
             if(body.requests !== undefined){
