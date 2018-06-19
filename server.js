@@ -6,9 +6,10 @@ let bodyParser  = require('body-parser')
 let moment      = require('moment');
 let mail        = require('./mail.js')
 let Annoucement = require("./models/announcement")
-let Request = require("./models/request")
-let Object = require("./models/object")
-let uuidv4 = require('uuid/v4');
+let Request     = require("./models/request")
+let Comment     = require("./models/comment")
+let Object      = require("./models/object")
+let uuidv4      = require('uuid/v4');
 
 // TEMPLATE ENGINE
 app.set('view engine', 'ejs')
@@ -173,7 +174,6 @@ app.get('/announcement/:id', (req, res) => {
   var checkingCanComment = function(body){
     let result = undefined
     if(body.requests !== undefined){
-        console.log(body)
       body.requests.forEach(function(request){
         if(request.accepted !== undefined && request.accepted === "oui" && request.borrower.login !== undefined && request.borrower.login === req.session.login && request.comment === undefined){
           result = true
@@ -209,6 +209,16 @@ app.get('/announcement/:id', (req, res) => {
 app.post('/announcement/request/validation/:id', (req, res) => {
 
     Request.addRequest(req.params.id,req.session.login, req.session.surname, req.session.givenName, req.session.mail, function(err, body) {
+        if (err) {
+            res.redirect('/announcement/'+req.params.id)
+        } else {
+            res.redirect('/announcement/'+req.params.id)
+        }
+    })
+})
+
+app.post('/announcement/comment/validation/:id', (req, res) => {
+    Comment.addComment(req.params.id, req.session.login, req.body.comment, req.body.rating, req.body.condition, function(err, body) {
         if (err) {
             res.redirect('/announcement/'+req.params.id)
         } else {
