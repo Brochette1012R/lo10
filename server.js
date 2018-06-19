@@ -100,8 +100,8 @@ app.get('/login', (req, res) => {
 
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
-  auth(req, res)
-  //auth_ldap(req, res)
+  //auth(req, res)
+  auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
