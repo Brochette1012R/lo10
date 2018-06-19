@@ -3,7 +3,12 @@
 <% if (typeof listOfAnnouncements !== 'undefined') { %>
   <div>
   <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Objets disponibles au prêt</h1>
-  <% listOfAnnouncements.forEach(function(announcement){ %>
+  <%
+    var counter = 0
+    listOfAnnouncements.forEach(function(announcement){
+    if (announcement.status == "disponible") {
+      counter++
+      %>
       <a href="/announcement/<%= announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1"><%= announcement._object.name %></h5>
@@ -12,12 +17,13 @@
         <p class="mb-1"><%= announcement._object.description %></p>
         <small class="text-muted">Disponible du <%= moment(announcement.datestart).format("DD/MM/YYYY") %> au <%= moment(announcement.dateend).format("DD/MM/YYYY") %></small>
       </a>
-    <% })} else { %>
+    <% } } )} %>
+  <% if (typeof listOfAnnouncements == 'undefined' || counter == 0){%>
   <div class="alert alert-info" role="alert">
     <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>
     Aucun objet n'est disponible au prêt pour le moment. Repassez plus tard !
   </div>
 <% } %>
 </div>
-
+<% console.log(counter) %>
 <% include footer %>

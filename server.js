@@ -3,13 +3,12 @@ let app         = require('express')()
 let Ldap        = require('ldapauth-fork')
 let session     = require('express-session')
 let bodyParser  = require('body-parser')
-let moment = require('moment');
+let moment      = require('moment');
 let mail        = require('./mail.js')
 let Annoucement = require("./models/announcement")
 let Request = require("./models/request")
 let Object = require("./models/object")
 let uuidv4 = require('uuid/v4');
-
 
 // TEMPLATE ENGINE
 app.set('view engine', 'ejs')
@@ -102,7 +101,7 @@ app.get('/login', (req, res) => {
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
   auth(req, res)
-  //  auth_ldap(req, res)
+  //auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
@@ -114,7 +113,7 @@ app.get('/announcements/available', (req, res) => {
       if(err){
         throw err
       }{
-          res.render('pages/objects',values = {listOfAnnouncements: body,moment:moment})
+          res.render('pages/objects',values = {listOfAnnouncements: body, moment: moment})
       }
   })
 
@@ -160,13 +159,15 @@ app.post('/announcement/add/validation', (req, res) => {
         }   else{
             Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, req.session.surname, req.session.givenName, req.session.mail,function(err,body) {
                 if(err){
-                    res.redirect('/announcement/add')
+
                 }else{
-                    res.redirect('/announcement/'+docid_announcement);
+
                 }
             })
         }
     })
+    res.redirect('/announcement/add')
+    //TODO : res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {
