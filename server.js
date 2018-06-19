@@ -111,8 +111,8 @@ app.get('/login', (req, res) => {
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
 
-  //auth(req, res)
-  auth_ldap(req, res)
+  auth(req, res)
+  //auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
@@ -285,13 +285,26 @@ app.post('/announcement/request/validation/:id', (req, res) => {
 
     Request.addRequest(req.params.id,req.session.login, req.session.surname, req.session.givenName, req.session.mail, function(err, body) {
         if (err) {
-            res.redirect('/announcement/'+req.params.id)
-        } else {
-            res.redirect('/announcement/'+req.params.id)
+          res.redirect('/announcement/'+req.params.id)
+        }else{
+          Annoucement.getById(req.params.id,function(err,body){
+              if(err){
+                  res.redirect('/announcement/'+req.params.id)
+              }else{
+                if(!err){
+                  let requestSender = body.requests[body.requests.length - 1].borrower
+                  let objectOwner = body.owner
+                  var mailContent = mail.buildMail(requestSender, objectOwner, body._object,'request')
+                  mail.sendMail(mail.buildMessage(mailContent))
+                  res.redirect('/')
+                }else{
+                  res.redirect('/announcement/'+req.params.id)
+                }
+              }
+            })
         }
     })
 })
-
 
 app.post('/announcement/comment/validation/:id', (req, res) => {
     Comment.addComment(req.params.id, req.session.login, req.body.comment, req.body.rating, req.body.condition, function(err, body) {
