@@ -1,6 +1,8 @@
 let request = require("../config/trocuttapiconnection")
 let design = "_design/requests/"
 let Announcement = require("./announcement")
+let uuidv4 = require('uuid/v4')
+let moment = require("moment")
 
 class Request {
     static getRequestForBorrower(BorrowerLogin,callback) {
@@ -88,13 +90,80 @@ class Request {
                     let i = 0
                     let flag = false
                     while ( i < body.requests.length && flag===false) {
-                        console.log(body.requests[i])
                         if (body.requests[i].borrower.login === login) {
                             if(body.requests[i].accepted === undefined || body.requests[i].accepted === "oui"){
                                 body.requests[i].accepted = "non"
                                 body.requests[i]['response-date'] = new Date()
                                 flag=true
                             }
+                        }
+                        i=i+1
+                    }
+                    // s'il y a une modif a faire
+                    if(flag === true){
+                        request.put({
+                            url: request.url + request.db + announcementId,
+                            body: body,
+                            json: true,
+                        },function(err, resp, body) {
+                            if (err){
+                                callback(err,body)
+                            }
+                            if (body) {
+                                callback(null,body)
+                            }
+                        })
+                    }else{
+                        callback({err: "pas besoin de modifier la demande"},body)
+                    }
+
+                }else{
+                    // pas de request dans ce document donc rien à rejeter
+                    callback({err: "pas de demandes sur cette annonce"},body)
+                }
+            }
+        });
+    }
+
+    static acceptRequest(announcementId, login, callback) {
+
+        Announcement.getById(announcementId, function(err, body){
+            if (err) {
+                callback(err,body)
+            } else {
+                if(body._object){
+                    delete body._object;
+                }
+                if(body.requests !== undefined) {
+                    let i = 0
+                    let flag = false
+                    while ( i < body.requests.length ) {
+                            if(body.requests[i].accepted === undefined ){
+                                flag = true
+                                if (body.requests[i].borrower.login === login) {
+                                    body.requests[i].accepted = "oui"
+                                    body.requests[i]['response-date'] = new Date()
+                                    body.status = "indisponible"
+                                    let datestart = moment().add(1,'d')
+                                    let dateend = datestart.add(1,'h')
+                                    body.appointment = {
+                                        DTSTART: datestart.format("YYYYMMJJ")+"T"+datestart.format("HHMMSS")+"Z",
+                                        DTEND: dateend.format("YYYYMMJJ")+"T"+dateend.format("HHMMSS")+"Z",
+                                        DTSTAMP: moment().format("YYYYMMJJ")+"T"+moment().format("HHMMSS")+"Z",
+                                        UID: uuidv4(),
+                                        CREATED: moment().format("YYYYMMJJ")+"T"+moment().format("HHMMSS")+"Z",
+                                        DESCRIPTION: "Rdv Trocutt",
+                                        "LAST-MODIFIED": moment().format("YYYYMMJJ")+"T"+moment().format("HHMMSS")+"Z",
+                                        LOCATION: "UTT",
+                                        SEQUENCE: "0",
+                                        STATUS: "CONFIRMED",
+                                        SUMMARY: "Trocutt",
+                                        TRANSP: "OPAQUE"
+                                    }
+                                }else{
+                                    body.requests[i].accepted = "non"
+                                    body.requests[i]['response-date'] = new Date()
+                                }
                         }
                         i=i+1
                     }

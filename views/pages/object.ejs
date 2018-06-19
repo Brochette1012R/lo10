@@ -24,58 +24,60 @@
         </div>
       </div>
     </div>
+      <% if(announcement.owner.login === session.login){%>
+        <% if(canComment == true) { %>
+          <button data-toggle="modal"  data-target="#Modal" class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d; margin-top:20px">Emettre une évaluation</button>
+        <% } %>
 
-      <% if(canComment == true) { %>
-        <button data-toggle="modal"  data-target="#Modal" class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d; margin-top:20px">Emettre une évaluation</button>
-      <% } %>
+        <div style="margin-top:50px">
+        <% if(typeof announcement.requests !== 'undefined'){
+            var canRefuseOrAccept = true
+            announcement.requests.forEach(function(request){
+              if(typeof request.accepted !== 'undefined' && request.accepted == 'oui' && typeof request.comment !== 'undefined'){ canRefuseOrAccept=false %>
+          <div class="d-flex w-100 justify-content-between">
+            <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires</h1>
+          </div>
+              <div class="list-group-item  flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1"><%= request.borrower.login %></h5>
+                  <small class="text-muted">Posté le <%= request.date_comment %></small>
+                </div>
+                <p class="mb-1"><%= request.comment %></p>
+                <p class="mb-1">Etat de l'objet : <%= request.condition %></p>
+                <small class="text-muted">Note <%= request.rating %>/10</small>
+              </div>
+        <%  }
+          })
+        }
+        %>
+        </div>
 
       <div style="margin-top:50px">
-      <% if(typeof announcement.requests !== 'undefined'){
-          var canRefuseOrAccept = true
-          announcement.requests.forEach(function(request){
-            if(typeof request.accepted !== 'undefined' && request.accepted == 'oui' && typeof request.comment !== 'undefined'){ canRefuseOrAccept=false %>
+        <% if(typeof announcement.requests !== 'undefined'){ %>
         <div class="d-flex w-100 justify-content-between">
-          <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires</h1>
-        </div>
-            <div class="list-group-item  flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1"><%= request.borrower.login %></h5>
-                <small class="text-muted">Posté le <%= request.date_comment %></small>
-              </div>
-              <p class="mb-1"><%= request.comment %></p>
-              <p class="mb-1">Etat de l'objet : <%= request.condition %></p>
-              <small class="text-muted">Note <%= request.rating %>/10</small>
-            </div>
-      <%  }
-        })
-      }
-      %>
-      </div>
-
-    <div style="margin-top:50px">
-      <% if(typeof announcement.requests !== 'undefined'){
-        announcement.requests.forEach(function(request){ %>
-        <div class="d-flex w-100 justify-content-between">
-          <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Demandes de prêt</h1>
-        </div>
-        <div class="list-group-item  flex-column align-items-start">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1"><%= request.borrower.login %></h5>
-            <small class="text-muted">Demandé le <%= request['sending-date'] %></small>
+                  <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Demandes de prêt</h1>
           </div>
-          <% if(canRefuseOrAccept && request.accepted === undefined){%>
-          <a href="/announcement/<%= announcement._id%>/<%= request.borrower.login%>/reject" class="btn btn-danger" role="button">Refuser demande de prêt</a>
-          <%}else if(request.accepted === "oui"){%>
-            <small>Rejetée</small>
-          <%}else if(request.accepted === "oui"){%>
-          <small>Validée</small>
-          <%}%>
-        </div>
+          <%announcement.requests.forEach(function(request){ %>
 
-        <%})%>
-      <%}%>
-    </div>
+          <div class="list-group-item  flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1"><%= request.borrower.login %></h5>
+              <small class="text-muted">Demandé le <%= request['sending-date'] %></small>
+            </div>
+            <% if(canRefuseOrAccept && request.accepted === undefined){%>
+            <a href="/announcement/<%= announcement._id%>/<%= request.borrower.login%>/accept" class="btn btn-success" role="button">Accepter</a>
+            <a href="/announcement/<%= announcement._id%>/<%= request.borrower.login%>/reject" class="btn btn-danger" role="button">Refuser</a>
+            <%}else if(request.accepted === "non"){%>
+              <small>Rejetée</small>
+            <%}else if(request.accepted === "oui"){%>
+            <small>Validée</small>
+            <%}%>
+          </div>
 
+          <%})%>
+        <%}%>
+      </div>
+    <% }%>
   <% } else { %>
       <div class="alert alert-info" role="alert">
         <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>

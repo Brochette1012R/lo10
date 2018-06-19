@@ -295,18 +295,23 @@ app.get('/announcement/:id/:login/reject', (req, res) => {
 
     Request.refuseRequest(req.params.id,req.params.login, function(err, body) {
         if (err) {
-            console.log("ERREUR : "+JSON.stringify(err))
             res.redirect('/announcement/'+req.params.id)
         } else {
-            console.log(JSON.stringify(err))
             res.redirect('/announcement/'+req.params.id)
         }
     })
 })
 
-/*app.get('/announcements/available?search=aa', (req, res) => {
+app.get('/announcement/:id/:login/accept', (req, res) => {
 
-}*/
+    Request.acceptRequest(req.params.id,req.params.login, function(err, body) {
+        if (err) {
+            res.redirect('/announcement/'+req.params.id)
+        } else {
+            res.redirect('/announcement/'+req.params.id)
+        }
+    })
+})
 
 /* ---- Logout endpoint ---- */
 app.get('/logout', (req, res) => {
