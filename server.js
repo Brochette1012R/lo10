@@ -9,6 +9,7 @@ let Annoucement = require("./models/announcement")
 let Request = require("./models/request")
 let Object = require("./models/object")
 let uuidv4 = require('uuid/v4');
+let Comment     = require("./models/comment")
 const {OperationHelper} = require('apac');
 
 const opHelper = new OperationHelper({
@@ -183,7 +184,7 @@ app.get('/announcements/available', (req, res) => {
             console.error("Something went wrong! ", err);
         });
 
-        
+
     }
 
 })
@@ -291,6 +292,17 @@ app.post('/announcement/request/validation/:id', (req, res) => {
     })
 })
 
+
+app.post('/announcement/comment/validation/:id', (req, res) => {
+    Comment.addComment(req.params.id, req.session.login, req.body.comment, req.body.rating, req.body.condition, function(err, body) {
+        if (err) {
+            res.redirect('/announcement/'+req.params.id)
+        } else {
+          res.redirect('/announcement/'+req.params.id)
+        }
+    })
+})
+
 app.get('/announcement/:id/:login/reject', (req, res) => {
 
     Request.refuseRequest(req.params.id,req.params.login, function(err, body) {
@@ -303,7 +315,6 @@ app.get('/announcement/:id/:login/reject', (req, res) => {
 })
 
 app.get('/announcement/:id/:login/accept', (req, res) => {
-
     Request.acceptRequest(req.params.id,req.params.login, function(err, body) {
         if (err) {
             res.redirect('/announcement/'+req.params.id)
