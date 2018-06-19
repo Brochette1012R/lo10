@@ -72,6 +72,26 @@ class Announcement {
             }
         })
     }
+
+    static getAvailables(callback) {
+        request.get({
+            url: request.url + request.db + design + "_view/getAvailableAnnouncements?include_docs=true",
+            json: true,
+        },function(err, resp, body) {
+            if (err){
+                callback(err,body)
+            }
+            else if (body) {
+                let listAvailableAnnouncements = []
+                for (let res of body.rows) {
+                    let announcement = res.value.announcement
+                    announcement._object = res.doc
+                    listAvailableAnnouncements.push(announcement)
+                }
+                callback(null,listAvailableAnnouncements)
+            }
+        })
+    }
 }
 
 module.exports = Announcement;

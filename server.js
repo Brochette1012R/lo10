@@ -100,8 +100,8 @@ app.get('/login', (req, res) => {
 
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
-  auth(req, res)
-  //auth_ldap(req, res)
+  //auth(req, res)
+  auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
@@ -109,7 +109,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/announcements/available', (req, res) => {
-  Annoucement.getAllWithObjects(function(err,body){
+  Annoucement.getAvailables(function(err,body){
       if(err){
         throw err
       }{
@@ -159,18 +159,29 @@ app.post('/announcement/add/validation', (req, res) => {
         }   else{
             Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, req.session.surname, req.session.givenName, req.session.mail,function(err,body) {
                 if(err){
-
+                  res.redirect('/announcement/add')
                 }else{
-
+                  res.redirect('/announcement/' + docid_announcement);
                 }
             })
         }
     })
-    res.redirect('/announcement/add')
-    //TODO : res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {
+
+  var checkingCanComment = function(body){
+    let result = false
+    if(typeof body.requests !== 'undefined'){
+      body.requests.forEach(function(request){
+        if(typeof request.accepted !== 'undefined' && request.accepted == 'oui' && typeof request.borrower.login !== 'undefined' && request.borrower.login == session.login && typeof request.comment == 'undefined'){
+          result = true
+        }
+      })
+    }
+    return result
+  }
+
     Annoucement.getById(req.params.id,function(err,body){
         if(err){
             res.redirect('/announcements/available')
@@ -188,7 +199,8 @@ app.get('/announcement/:id', (req, res) => {
             if(error === 0) {
                 canRequest = true
             }
-            res.render('pages/object', values = {announcement: body, session : req.session, moment:moment, canRequest: canRequest})
+            let canComment = checkingCanComment(body)
+            res.render('pages/object', values = {announcement: body, session : req.session, moment:moment, canRequest: canRequest, canComment: canComment})
         }
     })
 })
