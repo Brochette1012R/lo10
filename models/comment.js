@@ -32,7 +32,7 @@ class Comment {
                   body.requests[index].rating = rating
                   body.requests[index].condition = condition
                   body.requests[index].date_comment = new Date()
-                  
+
                   delete body._object;
 
                   request.put({
