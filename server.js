@@ -7,9 +7,12 @@ let moment      = require('moment');
 let mail        = require('./mail.js')
 let Annoucement = require("./models/announcement")
 let Request = require("./models/request")
+let httprequest = require("request")
 let Object = require("./models/object")
 let uuidv4 = require('uuid/v4');
 let Comment     = require("./models/comment")
+var retryCount = 8;
+let fs = require("fs")
 const {OperationHelper} = require('apac');
 
 const opHelper = new OperationHelper({
@@ -60,7 +63,7 @@ var auth = function(req, res, next) {
         req.session.connected = true
         res.redirect('/')
 
-    }else if(req.body.login  === "stenekgu" && req.body.pwd === "guylaine") {
+    }else if(req.body.login  === "a" && req.body.pwd === "a") {
         req.session.surname = "Stenek"
         req.session.givenName = "Guillaume"
         req.session.mail = "guillaume.stenek@utt.fr"
@@ -79,6 +82,7 @@ var auth_ldap = function(req,res) {
         searchFilter: '(uid={{username}})'
     });
     req.session.login = req.body.login
+    req.session.login = req.session.pwd
     if(req.body.login  === "" || req.body.pwd === "" || req.body.login  === undefined || req.body.pwd === undefined){
         req.session.errorAuth = "Identifiants non valides"
         res.redirect('/login')
@@ -131,11 +135,13 @@ app.get('/announcements/available', (req, res) => {
         })
     } else {
             //console.log(req);
+            var currentRetry = 0;
             var asinArray = [];
             var urlArray = [];
             var imgArray = [];
             var titleArray = [];
             var priceArray = [];
+            var error = false;
             opHelper.execute('ItemSearch', {
                 'SearchIndex': 'All',
                 'Keywords': req.query.search,
@@ -177,11 +183,31 @@ app.get('/announcements/available', (req, res) => {
 
                 //console.dir("AMAZON OBJECT : " + amazonObject);
 
-                res.render('pages/amazon',values = {listOfAmazonObjects: amazonObject});
+                res.render('pages/amazon',values = {listOfAmazonObjects: amazonObject, errors: error});
             });
 
         }).catch((err) => {
             console.error("Something went wrong! ", err);
+            var errorMessage = "AWS Access Key ID: AKIAJJXURI3CDYZTSW6Q. You are submitting requests too quickly. Please retry your requests at a slower rate.";
+            var empty ={asin : []};
+            error = true;
+            while(currentRetry <= retryCount) {
+                opHelper.execute('ItemSearch', {
+                    'SearchIndex': 'All',
+                    'Keywords': req.query.search,
+                    'ResponseGroup': 'Images,ItemAttributes,Offers'
+                }).then((response) => {
+                var parseString = require('xml2js').parseString;
+                var xml = response.responseBody;
+                //console.log("\n\nXML AFTER RETRY : " + xml);
+                });
+                currentRetry++;
+                //console.log("CURRENT RETRY :" + currentRetry);
+            }
+
+
+
+            res.render('pages/amazon',values = {listOfAmazonObjects: empty, errors: error, errMess: errorMessage});
         });
 
 
@@ -333,6 +359,33 @@ app.get('/announcement/:id/:login/accept', (req, res) => {
             res.redirect('/announcement/'+req.params.id)
         } else {
             res.redirect('/announcement/'+req.params.id)
+        }
+    })
+})
+
+app.get('/announcement/:id/appointment', (req, res) => {
+    Annoucement.getAppointment(req.params.id,function(err, body) {
+        if (err) {
+            res.redirect('/announcement/'+req.params.id)
+        } else {
+
+            let icspath = "./tempfiles/"+uuidv4()+".ics";
+            fs.writeFile(icspath, body, function (err) {
+                if (err){
+                    throw err
+                }
+                fs.createReadStream(icspath).pipe(httprequest.post("https://"+req.session.login+":"+req.session.pwd+"@zimbra.utt.fr/home/"+req.session.mail+"/calendar?fmt=ics",function(err, httpsResponse, body){
+                if ( err ) {
+                    throw err
+                } else {
+                    fs.unlink(icspath, (err) => {
+                        if (err) throw err;
+                    });
+                    res.redirect('/announcement/'+req.params.id)
+                }
+            }));
+
+            });
         }
     })
 })

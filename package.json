@@ -16,6 +16,7 @@
     "express": "^4.16.3",
     "express-basic-auth": "^1.1.5",
     "express-session": "^1.15.6",
+    "fs": "0.0.1-security",
     "ldapauth-fork": "^4.0.2",
     "moment": "^2.22.2",
     "nodemailer": "^4.6.7",
