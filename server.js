@@ -291,6 +291,19 @@ app.post('/announcement/request/validation/:id', (req, res) => {
     })
 })
 
+app.get('/announcement/:id/:login/reject', (req, res) => {
+
+    Request.refuseRequest(req.params.id,req.params.login, function(err, body) {
+        if (err) {
+            console.log("ERREUR : "+JSON.stringify(err))
+            res.redirect('/announcement/'+req.params.id)
+        } else {
+            console.log(JSON.stringify(err))
+            res.redirect('/announcement/'+req.params.id)
+        }
+    })
+})
+
 /*app.get('/announcements/available?search=aa', (req, res) => {
 
 }*/
