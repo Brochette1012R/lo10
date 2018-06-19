@@ -2,25 +2,11 @@
 
   <% if (typeof announcement !== 'undefined') { %>
 
-    <%
-      var canComment = function(){
-        let result = false
-        if(typeof announcement.requests !== 'undefined'){
-          announcement.requests.forEach(function(request){
-            if(typeof request.accepted !== 'undefined' && request.accepted == 'oui' && typeof request.borrower.login !== 'undefined' && request.borrower.login == session.login && typeof request.comment == 'undefined'){
-              result = true
-            }
-          })
-        }
-        return result
-      }
-    %>
-
     <div class="card">
       <div class="card-header">
         <div class="d-flex w-100 justify-content-between">
           <h1 class="mb-1" style="font-size:20px"><%= announcement._object.name %></h1>
-          <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY")  %> à <%= moment(announcement.created_at).format("HH/MM")  %> <% if(announcement.owner.login != session.login){ %> par <%= announcement.owner.login %> <% } %></small>
+          <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY")  %> à <%= moment(announcement.created_at).format("HH:MM")  %> <% if(announcement.owner.login != session.login){ %> par <%= announcement.owner.login %> <% } %></small>
         </div>
       </div>
       <div class="card-body">
@@ -39,7 +25,7 @@
       </div>
     </div>
 
-      <% if(canComment() == true) { %>
+      <% if(canComment == true) { %>
         <button data-toggle="modal"  data-target="#Modal" class="btn btn-outline-light" style="border-color: rgba(0,0,0,.125); color: #6c757d; margin-top:20px">Emettre une évaluation</button>
       <% } %>
 
