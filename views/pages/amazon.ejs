@@ -1,6 +1,6 @@
 <% include header %>
 
-<% if (typeof listOfAmazonObjects !== 'undefined') { %>
+<% if (typeof listOfAmazonObjects.asin.length !== 0 && !errors) { %>
   <div>
   <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Objets disponibles a l'achat sur Amazon</h1>
   <% var i =0 %>
@@ -19,7 +19,7 @@
 <% }} else { %>
   <div class="alert alert-info" role="alert">
     <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>
-    Une erreur est survenue !
+    Une erreur est survenue ! <%= errMess %>
   </div>
 <% } %>
 </div>

@@ -10,6 +10,7 @@ let Request = require("./models/request")
 let Object = require("./models/object")
 let uuidv4 = require('uuid/v4');
 let Comment     = require("./models/comment")
+var retryCount = 8;
 const {OperationHelper} = require('apac');
 
 const opHelper = new OperationHelper({
@@ -60,7 +61,7 @@ var auth = function(req, res, next) {
         req.session.connected = true
         res.redirect('/')
 
-    }else if(req.body.login  === "stenekgu" && req.body.pwd === "guylaine") {
+    }else if(req.body.login  === "a" && req.body.pwd === "a") {
         req.session.surname = "Stenek"
         req.session.givenName = "Guillaume"
         req.session.mail = "guillaume.stenek@utt.fr"
@@ -111,8 +112,8 @@ app.get('/login', (req, res) => {
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
 
-  //auth(req, res)
-  auth_ldap(req, res)
+  auth(req, res)
+  //auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
@@ -131,11 +132,13 @@ app.get('/announcements/available', (req, res) => {
         })
     } else {
             //console.log(req);
+            var currentRetry = 0;
             var asinArray = [];
             var urlArray = [];
             var imgArray = [];
             var titleArray = [];
             var priceArray = [];
+            var error = false;
             opHelper.execute('ItemSearch', {
                 'SearchIndex': 'All',
                 'Keywords': req.query.search,
@@ -177,11 +180,31 @@ app.get('/announcements/available', (req, res) => {
 
                 //console.dir("AMAZON OBJECT : " + amazonObject);
 
-                res.render('pages/amazon',values = {listOfAmazonObjects: amazonObject});
+                res.render('pages/amazon',values = {listOfAmazonObjects: amazonObject, errors: error});
             });
 
         }).catch((err) => {
             console.error("Something went wrong! ", err);
+            var errorMessage = "AWS Access Key ID: AKIAJJXURI3CDYZTSW6Q. You are submitting requests too quickly. Please retry your requests at a slower rate.";
+            var empty ={asin : []};
+            error = true;
+            while(currentRetry <= retryCount) {
+                opHelper.execute('ItemSearch', {
+                    'SearchIndex': 'All',
+                    'Keywords': req.query.search,
+                    'ResponseGroup': 'Images,ItemAttributes,Offers'
+                }).then((response) => {
+                var parseString = require('xml2js').parseString;
+                var xml = response.responseBody;
+                //console.log("\n\nXML AFTER RETRY : " + xml);
+                });
+                currentRetry++;
+                //console.log("CURRENT RETRY :" + currentRetry);
+            }
+
+
+
+            res.render('pages/amazon',values = {listOfAmazonObjects: empty, errors: error, errMess: errorMessage});
         });
 
 
