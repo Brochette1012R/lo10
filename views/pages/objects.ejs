@@ -6,7 +6,6 @@
   <%
     var counter = 0
     listOfAnnouncements.forEach(function(announcement){
-    if (announcement.status == "disponible") {
       counter++
       %>
       <a href="/announcement/<%= announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
@@ -17,7 +16,7 @@
         <p class="mb-1"><%= announcement._object.description %></p>
         <small class="text-muted">Disponible du <%= moment(announcement.datestart).format("DD/MM/YYYY") %> au <%= moment(announcement.dateend).format("DD/MM/YYYY") %></small>
       </a>
-    <% } } )} %>
+    <% } )} %>
   <% if (typeof listOfAnnouncements == 'undefined' || counter == 0){%>
   <div class="alert alert-info" role="alert">
     <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>

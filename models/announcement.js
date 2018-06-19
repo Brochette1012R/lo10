@@ -82,7 +82,7 @@ class Announcement {
 
     static getAvailables(callback) {
         request.get({
-            url: request.url + request.db + design + "_view/getAvailableAnnouncements?include_docs=true",
+            url: request.url + request.db + design + "_view/getAvailableAnnouncements?include_docs=true&descending=true",
             json: true,
         },function(err, resp, body) {
             if (err){
