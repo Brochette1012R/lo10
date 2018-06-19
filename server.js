@@ -179,7 +179,6 @@ app.get('/announcement/:id', (req, res) => {
   var checkingCanComment = function(body){
     let result = undefined
     if(body.requests !== undefined){
-        console.log(body)
       body.requests.forEach(function(request){
         if(request.accepted !== undefined && request.accepted === "oui" && request.borrower.login !== undefined && request.borrower.login === req.session.login && request.comment === undefined){
           result = true
