@@ -73,6 +73,56 @@ class Request {
             }
         });
     }
+
+    static refuseRequest(announcementId, login, callback) {
+
+        Announcement.getById(announcementId, function(err, body){
+
+            if (err) {
+                callback(err,body)
+            } else {
+                if(body._object){
+                    delete body._object;
+                }
+                if(body.requests !== undefined) {
+                    let i = 0
+                    let flag = false
+                    while ( i < body.requests.length && flag===false) {
+                        console.log(body.requests[i])
+                        if (body.requests[i].borrower.login === login) {
+                            if(body.requests[i].accepted === undefined || body.requests[i].accepted === "oui"){
+                                body.requests[i].accepted = "non"
+                                body.requests[i]['response-date'] = new Date()
+                                flag=true
+                            }
+                        }
+                        i=i+1
+                    }
+                    // s'il y a une modif a faire
+                    if(flag === true){
+                        request.put({
+                            url: request.url + request.db + announcementId,
+                            body: body,
+                            json: true,
+                        },function(err, resp, body) {
+                            if (err){
+                                callback(err,body)
+                            }
+                            if (body) {
+                                callback(null,body)
+                            }
+                        })
+                    }else{
+                        callback({err: "pas besoin de modifier la demande"},body)
+                    }
+
+                }else{
+                    // pas de request dans ce document donc rien à rejeter
+                    callback({err: "pas de demandes sur cette annonce"},body)
+                }
+            }
+        });
+    }
 }
 
 module.exports = Request;

@@ -30,14 +30,13 @@
       <% } %>
 
       <div style="margin-top:50px">
-      <div class="d-flex w-100 justify-content-between">
-        <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires</h1>
-      </div>
-      <%
-        if(typeof announcement.requests !== 'undefined'){
+      <% if(typeof announcement.requests !== 'undefined'){
+          var canRefuseOrAccept = true
           announcement.requests.forEach(function(request){
-            if(typeof request.accepted !== 'undefined' && request.accepted == 'oui' && typeof request.comment !== 'undefined'){
-      %>
+            if(typeof request.accepted !== 'undefined' && request.accepted == 'oui' && typeof request.comment !== 'undefined'){ canRefuseOrAccept=false %>
+        <div class="d-flex w-100 justify-content-between">
+          <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Commentaires</h1>
+        </div>
             <div class="list-group-item  flex-column align-items-start">
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1"><%= request.borrower.login %></h5>
@@ -52,6 +51,30 @@
       }
       %>
       </div>
+
+    <div style="margin-top:50px">
+      <% if(typeof announcement.requests !== 'undefined'){
+        announcement.requests.forEach(function(request){ %>
+        <div class="d-flex w-100 justify-content-between">
+          <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Demandes de prêt</h1>
+        </div>
+        <div class="list-group-item  flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1"><%= request.borrower.login %></h5>
+            <small class="text-muted">Demandé le <%= request['sending-date'] %></small>
+          </div>
+          <% if(canRefuseOrAccept && request.accepted === undefined){%>
+          <a href="/announcement/<%= announcement._id%>/<%= request.borrower.login%>/reject" class="btn btn-danger" role="button">Refuser demande de prêt</a>
+          <%}else if(request.accepted === "oui"){%>
+            <small>Rejetée</small>
+          <%}else if(request.accepted === "oui"){%>
+          <small>Validée</small>
+          <%}%>
+        </div>
+
+        <%})%>
+      <%}%>
+    </div>
 
   <% } else { %>
       <div class="alert alert-info" role="alert">

@@ -2,15 +2,15 @@
 
 <% if (typeof listOfMyAnnouncements !== 'undefined') { %>
   <div>
-    <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Objets disponibles au prêt</h1>
+    <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Mes objets disponibles au prêt</h1>
     <% listOfMyAnnouncements.forEach(function(announcement){ %>
         <a href="/announcement/<%= announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1"><%= announcement.object.name_object %></h5>
-            <small class="text-muted">Posté le <%= announcement.publication_date.toString().replace(/,/g, "/") %></small>
+            <h5 class="mb-1"><%= announcement._object.name %></h5>
+            <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY") %> à <%= moment(announcement.created_at).format("HH:MM") %>.</small>
           </div>
-          <p class="mb-1"><%= announcement.object.description %></p>
-          <small class="text-muted">Disponible du <%= announcement.startdate.toString().replace(/,/g, "/") %> au <%= announcement.enddate.toString().replace(/,/g, "/") %></small>
+          <p class="mb-1"><%= announcement._object.description %></p>
+          <small class="text-muted">Disponible du <%= moment(announcement.datestart).format("DD/MM/YYYY") %> au <%= moment(announcement.dateend).format("DD/MM/YYYY") %></small>
         </a>
       <% })} else { %>
     <div class="alert alert-info" role="alert">

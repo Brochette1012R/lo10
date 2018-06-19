@@ -1,0 +1,50 @@
+<% include header %>
+
+<% if (typeof listOfAmazonObjects !== 'undefined') { %>
+  <div>
+  <h1 class="display-1" style="font-size:2em; margin-bottom: 20px">Objets disponibles a l'achat sur Amazon</h1>
+  <% var i =0 %>
+  <% for (var j = 0; j < listOfAmazonObjects.asin.length; j++){ %>
+      <a href="<%= listOfAmazonObjects.articleUrl[i] %>" class="list-group-item list-group-item-action flex-column align-items-start">
+            <img src="<%= listOfAmazonObjects.imageUrl[i] %>" width="120" height="160">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1"><%= listOfAmazonObjects.title[i] %> </h5>
+          <small class="text-muted"><%= listOfAmazonObjects.price[i] %> </small>
+        </div>
+        <p class="mb-1">Shop Now</p>
+        <a href="https://www.amazon.fr/Electronic-Arts-5030948121524-FIFA-18/dp/B072JTCLVL?psc=1&SubscriptionId=AKIAJJXURI3CDYZTSW6Q&tag=trocutt-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B072JTCLVL" style="text-decoration:none">
+        </a>
+      </a>
+      <% i++ %>
+<% }} else { %>
+  <div class="alert alert-info" role="alert">
+    <h1 class="display-4" style="font-size:20px"><i class="fas fa-info-circle"></i> Oups !</h1>
+    Une erreur est survenue !
+  </div>
+<% } %>
+</div>
+
+<% include footer %>
+
+<!-- HTML code for ASIN : B072JTCLVL -->
+<!--   <a target="_blank" href="https://www.amazon.fr/Electronic-Arts-5030948121524-FIFA-18/dp/B072JTCLVL?psc=1&SubscriptionId=AKIAJJXURI3CDYZTSW6Q&tag=trocutt-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B072JTCLVL">
+        <img src="https://images-eu.ssl-images-amazon.com/images/I/51uIIOonM%2BL._SL160_.jpg" width="120" height="160">
+    </a>
+    <div class="product-title">
+        <h3>FIFA 18</h3>
+    </div>
+    <p class="product-price">EUR 34,99<br>
+       <a target="_blank" style="color: #337ab7; text-decoration:none;" href="https://www.amazon.fr/gp/offer-listing/B072JTCLVL?SubscriptionId=AKIAJJXURI3CDYZTSW6Q&tag=trocutt-21&linkCode=xm2&camp=2025&creative=12742&creativeASIN=B072JTCLVL"> More offers </a>
+   </p>
+    <div>
+        <span class="a-button a-button-primary">
+            <a target="_blank" href="https://www.amazon.fr/Electronic-Arts-5030948121524-FIFA-18/dp/B072JTCLVL?psc=1&SubscriptionId=AKIAJJXURI3CDYZTSW6Q&tag=trocutt-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B072JTCLVL" style="text-decoration:none">
+                <span class="a-button-inner">
+                    <img src="http://webservices.amazon.fr/scratchpad/assets/images/Amazon-Favicon-64x64.png" class="a-icon a-icon-shop-now">
+                    <input class="a-button-input" type="submit" value="Add to cart">
+                    <span class="a-button-text">Shop Now</span>
+                </span>
+            </a>
+        </span>
+    </div>
+</div> -->
