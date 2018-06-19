@@ -3,9 +3,10 @@ let app         = require('express')()
 let Ldap        = require('ldapauth-fork')
 let session     = require('express-session')
 let bodyParser  = require('body-parser')
-let moment = require('moment');
+let moment      = require('moment');
 let mail        = require('./mail.js')
 let Annoucement = require("./models/announcement")
+let Request = require("./models/request")
 let Object = require("./models/object")
 let uuidv4 = require('uuid/v4');
 const {OperationHelper} = require('apac');
@@ -17,7 +18,6 @@ const opHelper = new OperationHelper({
     locale: 'FR',
     maxRequestsPerSecond: 1
 });
-
 
 // TEMPLATE ENGINE
 app.set('view engine', 'ejs')
@@ -60,12 +60,19 @@ var auth = function(req, res, next) {
         res.redirect('/')
     } else{
         req.session.errorAuth = "Identifiants non valides"
-
         res.redirect('/login')
     }
 }
 
+
 /*var auth_ldap = function(req,res) {
+
+var auth_ldap = function(req,res) {
+    let directory = new Ldap({
+        url: 'ldap://ldap.utt.fr',
+        searchBase: 'ou=People,dc=utt,dc=fr',
+        searchFilter: '(uid={{username}})'
+    });
     req.session.login = req.body.login
     if(req.body.login  === "" || req.body.pwd === "" || req.body.login  === undefined || req.body.pwd === undefined){
         req.session.errorAuth = "Identifiants non valides"
@@ -76,7 +83,6 @@ var auth = function(req, res, next) {
         if(err){
             res.redirect('/login')
         }else{
-            console.log(user)
             req.session.connected = true
             req.session.givenName = user.givenName
             req.session.surname = user.sn
@@ -85,12 +91,6 @@ var auth = function(req, res, next) {
         }
     });
 }
-
-var directory = new Ldap({
-    url: 'ldap://ldap.utt.fr',
-    searchBase: 'ou=People,dc=utt,dc=fr',
-    searchFilter: '(uid={{username}})'
-});*/
 
 // ROUTES
 /* ---- Login endpoint ---- */
@@ -106,7 +106,8 @@ app.get('/login', (req, res) => {
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
   auth(req, res)
-    //auth_ldap(req, res)
+
+  //auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
@@ -120,26 +121,66 @@ app.get('/announcements/available', (req, res) => {
         if(err){
         throw err
       }{
-        res.render('pages/objects',values = {listOfAnnouncements: body,moment:moment})
+          res.render('pages/objects',values = {listOfAnnouncements: body, moment: moment})
       }
     })
     } else {
             //console.log(req);
+            var asinArray = [];
+            var urlArray = [];
+            var imgArray = [];
+            var titleArray = [];
+            var priceArray = [];
             opHelper.execute('ItemSearch', {
                 'SearchIndex': 'All',
                 'Keywords': req.query.search,
                 'ResponseGroup': 'Images,ItemAttributes,Offers'
         }).then((response) => {
-            console.log("HELLO :" + response.responseBody.ASIN);
-            console.log("RAW RESPONSE BODY: ", response.responseBody);
+            //console.log("HELLO :" + response.responseBody.ASIN);
+            //console.log("RAW RESPONSE BODY: ", response.responseBody);
             //console.log("RESPONSE RESULT" + response.result);
+            var parseString = require('xml2js').parseString;
+            var xml = response.responseBody;
+            xml = xml.replace("<ItemSearchResponse xmlns=http://webservices.amazon.com/AWSECommerceService/2011-08-01>","<ItemSearchResponse>");
+            //console.log("XML REPLACED : " + xml);
+            parseString(xml, function (err, result) {
+                for (var i = 0; i < result.ItemSearchResponse.Items.length; i++) {
+                    for (var j = 0; j < result.ItemSearchResponse.Items[i].Item.length; j++) {
+                        //console.dir(result.ItemSearchResponse.Items[i].Item[j].ASIN);
+                        //console.dir(result.ItemSearchResponse.Items[i].Item[j].DetailPageURL);
+                        asinArray.push(result.ItemSearchResponse.Items[i].Item[j].ASIN);
+                        urlArray.push(result.ItemSearchResponse.Items[i].Item[j].DetailPageURL);
+                        imgArray.push(result.ItemSearchResponse.Items[i].Item[j].MediumImage[0].URL);
+                        titleArray.push(result.ItemSearchResponse.Items[i].Item[j].ItemAttributes[0].Title);
+                        priceArray.push(result.ItemSearchResponse.Items[i].Item[j].OfferSummary[0].LowestNewPrice[0].FormattedPrice);
+                        //console.dir(result.ItemSearchResponse.Items[i].Item[j].ItemAttributes);
+                        //console.dir(result.ItemSearchResponse.Items[i].Item[j].Offers);
+                    }
+                }
+
+                //console.dir("ASIN ARRAY :" + asinArray);
+                //console.dir("URL ARRAY :" + urlArray);
+                //console.dir("IMG ARRAY :" + imgArray);
+                //console.dir("TITLE ARRAY :" + titleArray);
+                var amazonObject = {
+                    asin: asinArray,
+                    articleUrl: urlArray,
+                    imageUrl: imgArray,
+                    title: titleArray,
+                    price: priceArray
+                };
+
+                //console.dir("AMAZON OBJECT : " + amazonObject);
+
+                res.render('pages/amazon',values = {listOfAmazonObjects: amazonObject});
+            });
 
         }).catch((err) => {
             console.error("Something went wrong! ", err);
         });
-        res.render('pages/amazon');
-    }
 
+        
+    }
 
 })
 
@@ -148,7 +189,13 @@ app.get('/announcements/my_announcements', (req, res) => {
 })
 
 app.get('/announcements/my_borrows', (req, res) => {
-  res.render('pages/my_borrows')
+    Request.getRequestForBorrower(req.session.login,function(err,body){
+        if(err){
+            throw err
+        }{
+            res.render('pages/my_borrows',values = {listOfMyBorrows: body,moment:moment})
+        }
+    })
 })
 
 app.get('/announcement/add', (req, res) => {
@@ -177,13 +224,15 @@ app.post('/announcement/add/validation', (req, res) => {
         }   else{
             Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, req.session.surname, req.session.givenName, req.session.mail,function(err,body) {
                 if(err){
-                    res.redirect('/announcement/add')
+
                 }else{
-                    res.redirect('/announcement/'+docid_announcement);
+
                 }
             })
         }
     })
+    res.redirect('/announcement/add')
+    //TODO : res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {
@@ -191,7 +240,7 @@ app.get('/announcement/:id', (req, res) => {
         if(err){
             res.redirect('/announcements/available')
         }else{
-            res.render('pages/object', values = {announcement: body, session : req.session, moment:moment})
+            res.render('pages/object', values = {announcement: body, session : req.session, moment : moment})
         }
     })
 })
