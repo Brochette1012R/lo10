@@ -120,7 +120,13 @@ app.get('/announcements/available', (req, res) => {
 })
 
 app.get('/announcements/my_announcements', (req, res) => {
-  res.render('pages/my_objects')
+    Annoucement.getAllWithObjectForLogin(req.session.login,false,function(err,body){
+        if(err){
+            res.redirect('/')
+        }else{
+            res.render('pages/my_objects',{listOfMyAnnouncements: body,moment: moment})
+        }
+    })
 })
 
 app.get('/announcements/my_borrows', (req, res) => {

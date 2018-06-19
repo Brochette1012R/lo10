@@ -54,9 +54,10 @@ class Announcement {
         })
     }
 
-    static getAllWithObjects(callback) {
+    static getAllWithObjectForLogin(login,ascending,callback) {
+
         request.get({
-            url: request.url + request.db + design + "_view/getAnnouncements?include_docs=true",
+            url: request.url + request.db + design + "_view/getAnnouncements?startkey=[\""+login+"\"]&endkey=[\""+login+"\",{}]&include_docs=true",
             json: true,
         },function(err, resp, body) {
             if (err){
@@ -65,8 +66,14 @@ class Announcement {
             else if (body) {
                 let listAnnouncements = []
                 for (let res of body.rows) {
-                    res.key[1]._object = res.doc
-                    listAnnouncements.push(res.key[1])
+                    let announcement = res.value.announcement
+                    announcement._object = res.doc
+                    if(!ascending){
+                        listAnnouncements.unshift(announcement)
+                    }else{
+                        listAnnouncements.push(announcement)
+                    }
+
                 }
                 callback(null,listAnnouncements)
             }
