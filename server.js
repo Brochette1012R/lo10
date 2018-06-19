@@ -13,7 +13,6 @@ let uuidv4 = require('uuid/v4');
 let Comment     = require("./models/comment")
 var retryCount = 8;
 let fs = require("fs")
->>>>>>> f098a25729fa8880f9c11d2c8a43b7ef363c06f6
 const {OperationHelper} = require('apac');
 
 const opHelper = new OperationHelper({
