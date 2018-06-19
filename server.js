@@ -58,14 +58,18 @@ var auth = function(req, res, next) {
         req.session.mail = "remi.beraux@utt.fr"
         req.session.connected = true
         res.redirect('/')
+
+    }else if(req.body.login  === "stenekgu" && req.body.pwd === "guylaine") {
+        req.session.surname = "Stenek"
+        req.session.givenName = "Guillaume"
+        req.session.mail = "guillaume.stenek@utt.fr"
+        req.session.connected = true
+        res.redirect('/')
     } else{
         req.session.errorAuth = "Identifiants non valides"
         res.redirect('/login')
     }
 }
-
-
-/*var auth_ldap = function(req,res) {
 
 var auth_ldap = function(req,res) {
     let directory = new Ldap({
@@ -105,9 +109,9 @@ app.get('/login', (req, res) => {
 
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
-  auth(req, res)
 
-  //auth_ldap(req, res)
+  //auth(req, res)
+  auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
@@ -117,13 +121,13 @@ app.get('/', (req, res) => {
 
 app.get('/announcements/available', (req, res) => {
      if(req.query.search  === undefined || req.query.search  === '') {
-        Annoucement.getAllWithObjects(function(err,body){
+        Annoucement.getAvailables(function(err,body){
         if(err){
-        throw err
-      }{
-          res.render('pages/objects',values = {listOfAnnouncements: body, moment: moment})
-      }
-    })
+            throw err
+        }else{
+            res.render('pages/objects',values = {listOfAnnouncements: body, moment: moment})
+        }
+        })
     } else {
             //console.log(req);
             var asinArray = [];
@@ -185,7 +189,13 @@ app.get('/announcements/available', (req, res) => {
 })
 
 app.get('/announcements/my_announcements', (req, res) => {
-  res.render('pages/my_objects')
+    Annoucement.getAllWithObjectForLogin(req.session.login,false,function(err,body){
+        if(err){
+            res.redirect('/')
+        }else{
+            res.render('pages/my_objects',{listOfMyAnnouncements: body,moment: moment})
+        }
+    })
 })
 
 app.get('/announcements/my_borrows', (req, res) => {
@@ -224,23 +234,59 @@ app.post('/announcement/add/validation', (req, res) => {
         }   else{
             Annoucement.creates(docid_announcement,req.session.login,body.id,req.body.datestart,req.body.dateend, req.session.surname, req.session.givenName, req.session.mail,function(err,body) {
                 if(err){
-
+                  res.redirect('/announcement/add')
                 }else{
-
+                  res.redirect('/announcement/' + docid_announcement);
                 }
             })
         }
     })
-    res.redirect('/announcement/add')
-    //TODO : res.redirect('/announcement/:id');
 })
 
 app.get('/announcement/:id', (req, res) => {
+
+  var checkingCanComment = function(body){
+    let result = undefined
+    if(body.requests !== undefined){
+      body.requests.forEach(function(request){
+        if(request.accepted !== undefined && request.accepted === "oui" && request.borrower.login !== undefined && request.borrower.login === req.session.login && request.comment === undefined){
+          result = true
+        }
+      })
+    }
+    return result
+  }
+
     Annoucement.getById(req.params.id,function(err,body){
         if(err){
-            res.redirect('/announcements/available')
+            res.redirect("/announcements/available")
         }else{
-            res.render('pages/object', values = {announcement: body, session : req.session, moment : moment})
+            let error = 0;
+            if(body.requests !== undefined){
+                for (let i=0; i < body['requests'].length; i++) {
+                    if (body['requests'][i]['borrower']['login'] === req.session.login) {
+                        error = 1;
+                        break;
+                    }
+                }
+            }
+            let canRequest = undefined
+            if(error === 0) {
+                canRequest = true
+            }
+            let canComment = checkingCanComment(body)
+            res.render('pages/object', values = {announcement: body, session : req.session, moment:moment, canRequest: canRequest, canComment: canComment})
+        }
+    })
+})
+
+app.post('/announcement/request/validation/:id', (req, res) => {
+
+    Request.addRequest(req.params.id,req.session.login, req.session.surname, req.session.givenName, req.session.mail, function(err, body) {
+        if (err) {
+            res.redirect('/announcement/'+req.params.id)
+        } else {
+            res.redirect('/announcement/'+req.params.id)
         }
     })
 })
