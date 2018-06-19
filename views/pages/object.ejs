@@ -57,7 +57,7 @@
         <div class="d-flex w-100 justify-content-between">
                   <h1 class="display-1" style="font-size:1.3em; margin-bottom: 20px">Demandes de prêt</h1>
           </div>
-          <%announcement.requests.forEach(function(request){ %>
+          <% announcement.requests.forEach(function(request){ %>
 
           <div class="list-group-item  flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
@@ -70,6 +70,9 @@
             <%}else if(request.accepted === "non"){%>
               <small>Rejetée</small>
             <%}else if(request.accepted === "oui"){%>
+              <%if(session.login === announcement.owner.login){%>
+            <a href="/announcement/<%= announcement._id%>/appointment" class="btn btn-primary" role="button">Importer rendez-vous</a>
+              <%}%>
             <small>Validée</small>
             <%}%>
           </div>
