@@ -81,13 +81,13 @@ var auth_ldap = function(req,res) {
         searchBase: 'ou=People,dc=utt,dc=fr',
         searchFilter: '(uid={{username}})'
     });
-    req.session.login = req.body.login
-    req.session.login = req.session.pwd
+
     if(req.body.login  === "" || req.body.pwd === "" || req.body.login  === undefined || req.body.pwd === undefined){
         req.session.errorAuth = "Identifiants non valides"
         res.redirect('/login')
     }
-
+    req.session.login = req.body.login
+    req.session.pwd = req.body.pwd
     directory.authenticate(req.body.login, req.body.pwd, function(err, user) {
         if(err){
             res.redirect('/login')
@@ -115,8 +115,8 @@ app.get('/login', (req, res) => {
 // Called when the authentification form is submitted
 app.post('/login/validation', (req, res) => {
 
-  auth(req, res)
-  //auth_ldap(req, res)
+  //auth(req, res)
+  auth_ldap(req, res)
 })
 
 app.get('/', (req, res) => {
