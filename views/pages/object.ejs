@@ -61,9 +61,10 @@
 
           <div class="list-group-item  flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1"><%= request.borrower.login %></h5>
+              <h5 class="mb-1"><%= request.borrower.givenName %> <%= request.borrower.surname %> <small>(<%= request.borrower.login %>)</small></h5>
               <small class="text-muted">Demandé le <%= request['sending-date'] %></small>
             </div>
+            <div class="d-flex w-100 justify-content-between">
             <% if(canRefuseOrAccept && request.accepted === undefined){%>
             <a href="/announcement/<%= announcement._id%>/<%= request.borrower.login%>/accept" class="btn btn-success" role="button">Accepter</a>
             <a href="/announcement/<%= announcement._id%>/<%= request.borrower.login%>/reject" class="btn btn-danger" role="button">Refuser</a>
@@ -72,9 +73,11 @@
             <%}else if(request.accepted === "oui"){%>
               <%if(session.login === announcement.owner.login){%>
             <a href="/announcement/<%= announcement._id%>/appointment" class="btn btn-primary" role="button">Importer rendez-vous</a>
+            <small>Rendez-vous le <%= moment(announcement.appointment.DTSTART).format("DD/MM/YYYY")%> à <%= moment(announcement.appointment.DTSTART).format("HH:MM")%></small>
               <%}%>
             <small>Validée</small>
             <%}%>
+            </div>
           </div>
 
           <%})%>
