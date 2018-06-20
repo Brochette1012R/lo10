@@ -11,7 +11,7 @@
   }
 
   let announcement = {
-    'title' : ''
+    'name' : ''
   }
 */
 
@@ -23,17 +23,17 @@ exports.buildMail = function(requestSender, objectOwner, announcement, emailType
   let mailType = {
     request : {
       'subject': 'Troc\'UTT - Demande de prêt reçue',
-      'text': requestSender.givenName + ' ' + requestSender.surname + ' souhaite vous empruinter l\'object proposé dans l\'annonce "' + announcement.title + '." Pour accepter ou refuser l\'offre, connectez vous sur l\'application Troc\'UTT rubrique "Mes annonces" et rendez-vous sur l\'annonce concernée. \n\nAdresse mail de l\'expéditeur de la requête : ' + requestSender.mail,
+      'text': requestSender.givenName + ' ' + requestSender.surname + ' souhaite vous emprunter l\'object proposé dans l\'annonce "' + announcement.name + '." Pour accepter ou refuser l\'offre, connectez vous sur l\'application Troc\'UTT rubrique "Mes annonces" et rendez-vous sur l\'annonce concernée. \n\nAdresse mail de l\'expéditeur de la requête : ' + requestSender.mail,
       'mail' : objectOwner.mail
     },
     acceptedRequest : {
       'subject': 'Troc\'UTT - Demande de prêt acceptée',
-      'text': 'Votre demande de prêt concernant l\'objet ' + announcement.title + 'a été acceptée. Contactez le propiétaire de celui-ci pour fixer une date et un lieu de rendez-vous. \n\nAdresse mail du propriétaire : ' + objectOwner.mail,
+      'text': 'Votre demande de prêt concernant l\'objet ' + announcement.name + 'a été acceptée. Contactez le propiétaire de celui-ci pour fixer une date et un lieu de rendez-vous. \n\nAdresse mail du propriétaire : ' + objectOwner.mail,
       'mail' : requestSender.mail
     },
     refusedRequest : {
       'subject': 'Troc\'UTT - Demande de prêt refusée',
-      'text': 'Votre demande de prêt concernant l\'objet ' + announcement.title + 'n\'a pas été acceptée.',
+      'text': 'Votre demande de prêt concernant l\'objet ' + announcement.name + 'n\'a pas été acceptée.',
       'mail' : requestSender.mail
     }
   }
