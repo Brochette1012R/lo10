@@ -7,7 +7,7 @@
       <a href="/announcement/<%= AnnouncementWithRequest.Announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1"><%= AnnouncementWithRequest.Announcement._object.name %></h5>
-          <small class="text-muted">Posté le <%= moment(AnnouncementWithRequest.Announcement.created_at).format("DD/MM/YYYY") %> à <%= moment(AnnouncementWithRequest.Announcement.created_at).format("HH:MM") %> par <%= AnnouncementWithRequest.Announcement.owner.login %>.</small>
+          <small class="text-muted">Posté le <%= moment(AnnouncementWithRequest.Announcement.created_at).format("DD/MM/YYYY") %> à <%= moment(AnnouncementWithRequest.Announcement.created_at).format("HH:mm") %> par <%= AnnouncementWithRequest.Announcement.owner.login %>.</small>
         </div>
         <div class="d-flex w-100 justify-content-between">
           <p class="mb-1"><%= AnnouncementWithRequest.Announcement._object.description %></p>

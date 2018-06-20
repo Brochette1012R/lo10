@@ -147,13 +147,13 @@ class Request {
                                     let datestart = moment().add(1,'d')
                                     let dateend = datestart.add(1,'h')
                                     body.appointment = {
-                                        DTSTART: datestart.format("YYYYMMDD")+"T"+datestart.format("HHMM")+"00Z",
-                                        DTEND: dateend.format("YYYYMMDD")+"T"+dateend.format("HHMM")+"00Z",
-                                        DTSTAMP: moment().format("YYYYMMDD")+"T"+moment().format("HHMM")+"00Z",
+                                        DTSTART: datestart.format("YYYYMMDD")+"T"+datestart.format("HHmm")+"00Z",
+                                        DTEND: dateend.format("YYYYMMDD")+"T"+dateend.format("HHmm")+"00Z",
+                                        DTSTAMP: moment().format("YYYYMMDD")+"T"+moment().format("HHmm")+"00Z",
                                         UID: uuidv4(),
-                                        CREATED: moment().format("YYYYMMDD")+"T"+moment().format("HHMM")+"00Z",
+                                        CREATED: moment().format("YYYYMMDD")+"T"+moment().format("HHmm")+"00Z",
                                         DESCRIPTION: "Rdv Trocutt",
-                                        "LAST-MODIFIED": moment().format("YYYYMMDD")+"T"+moment().format("HHMM")+"00Z",
+                                        "LAST-MODIFIED": moment().format("YYYYMMDD")+"T"+moment().format("HHmm")+"00Z",
                                         LOCATION: "UTT",
                                         SEQUENCE: "0",
                                         STATUS: "CONFIRMED",

@@ -6,7 +6,7 @@
       <div class="card-header">
         <div class="d-flex w-100 justify-content-between">
           <h1 class="mb-1" style="font-size:20px"><%= announcement._object.name %></h1>
-          <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY")  %> à <%= moment(announcement.created_at).format("HH:MM")  %> <% if(announcement.owner.login != session.login){ %> par <%= announcement.owner.login %> <% } %></small>
+          <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY")  %> à <%= moment(announcement.created_at).format("HH:mm")  %> <% if(announcement.owner.login != session.login){ %> par <%= announcement.owner.login %> <% } %></small>
         </div>
       </div>
       <div class="card-body">
@@ -73,7 +73,7 @@
             <%}else if(request.accepted === "oui"){%>
               <%if(session.login === announcement.owner.login){%>
             <a href="/announcement/<%= announcement._id%>/appointment" class="btn btn-primary" role="button">Importer rendez-vous</a>
-            <small>Rendez-vous le <%= moment(announcement.appointment.DTSTART).format("DD/MM/YYYY")%> à <%= moment(announcement.appointment.DTSTART).format("HH:MM")%></small>
+            <small>Rendez-vous le <%= moment(announcement.appointment.DTSTART).format("DD/MM/YYYY")%> à <%= moment(announcement.appointment.DTSTART).format("HH:mm")%></small>
               <%}%>
             <small>Validée</small>
             <%}%>

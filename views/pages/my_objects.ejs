@@ -7,7 +7,7 @@
         <a href="/announcement/<%= announcement._id %>" class="list-group-item list-group-item-action flex-column align-items-start">
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1"><%= announcement._object.name %></h5>
-            <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY") %> à <%= moment(announcement.created_at).format("HH:MM") %>.</small>
+            <small class="text-muted">Posté le <%= moment(announcement.created_at).format("DD/MM/YYYY") %> à <%= moment(announcement.created_at).format("HH:mm") %></small>
           </div>
           <p class="mb-1"><%= announcement._object.description %></p>
           <small class="text-muted">Disponible du <%= moment(announcement.datestart).format("DD/MM/YYYY") %> au <%= moment(announcement.dateend).format("DD/MM/YYYY") %></small>
